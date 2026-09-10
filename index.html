@@ -2,21 +2,109 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- ============================================================
+     НАСТРОЙКИ ЭКРАНА
+     ============================================================
+     width=device-width — ширина страницы = ширина экрана телефона
+     initial-scale=1.0 — без автозума при открытии
+     maximum-scale=1.0, user-scalable=no — запрещаем пинч-зум (чтобы
+       случайно не зумить, когда тапаешь по карточкам)
+     viewport-fit=cover — ВАЖНО для iPhone с чёлкой/Dynamic Island:
+       позволяет контенту занимать всю площадь экрана, включая
+       область под системными элементами
+     ============================================================ -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<!-- ============================================================
+     НАСТРОЙКИ ДЛЯ РЕЖИМА "ВЕБ-ПРИЛОЖЕНИЕ" (iOS)
+     ============================================================
+     Эти теги работают ТОЛЬКО если сайт добавлен на главный экран
+     ("Поделиться" → "На экран Домой").
+     В обычном Safari они игнорируются.
+     ============================================================ -->
+
+<!-- Открывать без адресной строки и панелей Safari — как приложение -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- Стиль верхней полосы (часы, батарея):
+     black-translucent = прозрачная, фон приложения виден под ней -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- Название иконки на главном экране -->
+<meta name="apple-mobile-web-app-title" content="Padel Score">
+
+<!-- Цвет адресной строки в Android Chrome -->
+<meta name="theme-color" content="#1a1d21">
+
 <title>Padel Score</title>
 
-<style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { margin: 0; padding: 0; min-height: 100%; overscroll-behavior: none; }
+<!-- ============================================================
+     ИКОНКА ДЛЯ ГЛАВНОГО ЭКРАНА (ТЕННИСНЫЙ МЯЧИК)
+     ============================================================
+     Это SVG-картинка, встроенная прямо в HTML через data:image/svg+xml.
+     Не нужен отдельный файл — всё в одном.
+     Мячик нарисован кодом: жёлто-зелёный круг с белыми линиями.
+     ============================================================ -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%231a1d21'/%3E%3Ccircle cx='90' cy='90' r='60' fill='%23c8e64c'/%3E%3Cpath d='M 50 55 Q 90 90 50 125' stroke='white' stroke-width='5' fill='none'/%3E%3Cpath d='M 130 55 Q 90 90 130 125' stroke='white' stroke-width='5' fill='none'/%3E%3C/svg%3E">
 
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #1a1d21;
-        color: #e8eaed;
-        min-height: 100vh;
-        user-select: none;
+<!-- Тот же значок для Android / Chrome -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Ccircle cx='90' cy='90' r='60' fill='%23c8e64c'/%3E%3Cpath d='M 50 55 Q 90 90 50 125' stroke='white' stroke-width='5' fill='none'/%3E%3Cpath d='M 130 55 Q 90 90 130 125' stroke='white' stroke-width='5' fill='none'/%3E%3C/svg%3E">
+
+<style>
+    /* ============================================================
+       БАЗОВЫЕ СБРОСЫ
+       ============================================================
+       box-sizing: border-box — padding и border входят в ширину
+       -webkit-tap-highlight-color: transparent — убирает серую
+         вспышку при тапе на iPhone
+       ============================================================ */
+    * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
     }
 
+    html, body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        /* Запрещаем "отскок" страницы при свайпе — на iOS убирает
+           резиновый эффект, когда тянешь экран вниз/вверх */
+        overscroll-behavior: none;
+    }
+
+    /* ============================================================
+       ОСНОВНОЙ ФОН И ШРИФТ
+       ============================================================ */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #1a1d21;       /* тёмный фон — основной цвет приложения */
+        color: #e8eaed;            /* светлый текст */
+        min-height: 100vh;         /* минимум на всю высоту экрана */
+        /* Запрещаем выделение текста при долгом тапе */
+        user-select: none;
+        -webkit-user-select: none;
+
+        /* ============================================================
+           БЕЗОПАСНЫЕ ОТСТУПЫ (чёлка, Dynamic Island, полоска жестов)
+           ============================================================
+           env(safe-area-inset-*) — специальные переменные iOS,
+           которые дают размер опасных зон по краям экрана.
+           Работают только при viewport-fit=cover.
+           ============================================================ */
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+
+    /* ============================================================
+       КОНТЕЙНЕР ПРИЛОЖЕНИЯ
+       ============================================================
+       .app — обёртка всего содержимого. Ограничиваем ширину 700px,
+       чтобы на планшете не растягивалось на всю ширину.
+       ============================================================ */
     .app {
         max-width: 700px;
         margin: 0 auto;
@@ -26,23 +114,34 @@
         flex-direction: column;
     }
 
+    /* ============================================================
+       ЗАГОЛОВОК "🎾 PADEL SCORE"
+       ============================================================ */
     h1 {
         text-align: center;
         margin: 4px 0 16px;
         font-size: 24px;
         letter-spacing: 3px;
-        color: #8ab4a0;
+        color: #8ab4a0;            /* приглушённый зелёный */
         text-transform: uppercase;
         font-weight: 700;
     }
 
+    /* ============================================================
+       ИГРОВОЕ ПОЛЕ — ДВЕ КАРТОЧКИ КОМАНД
+       ============================================================
+       Сетка 1fr 1fr = две равные колонки
+       ============================================================ */
     .scoreboard {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
-        flex: 1;
+        flex: 1;                    /* растягивается на всё доступное место */
     }
 
+    /* ============================================================
+       КАРТОЧКА ОДНОЙ КОМАНДЫ (это и есть кнопка "+1 очко")
+       ============================================================ */
     .score-card {
         background: #262b30;
         border-radius: 20px;
@@ -55,25 +154,30 @@
         transition: border-color 0.2s, background 0.2s, transform 0.05s;
         min-height: 320px;
         cursor: pointer;
-        -webkit-user-select: none;
-        user-select: none;
-        position: relative;
+        position: relative;         /* нужно для absolute-блока .card-top */
     }
 
+    /* Эффект нажатия — карточка слегка сжимается */
     .score-card:active {
         transform: scale(0.98);
         background: #2e3439;
     }
 
+    /* Подсветка карточки команды, которая подаёт */
     .score-card.serving {
         border-color: #8ab4a0;
         background: #2a3438;
     }
-
     .score-card.serving:active {
         background: #33403f;
     }
 
+    /* ============================================================
+       ВЕРХНИЙ БЛОК ВНУТРИ КАРТОЧКИ (название, подающий, "подача")
+       ============================================================
+       Позиционируем абсолютно — прибиваем к верху карточки,
+       чтобы низ (цифры) свободно двигался отдельно.
+       ============================================================ */
     .card-top {
         position: absolute;
         top: 22px;
@@ -83,6 +187,7 @@
         text-align: center;
     }
 
+    /* Название команды (например, "КОМАНДА 1") */
     .team-label {
         font-size: 13px;
         letter-spacing: 1px;
@@ -96,6 +201,7 @@
         white-space: nowrap;
     }
 
+    /* Имя игрока, который подаёт прямо сейчас */
     .server-name {
         font-size: 15px;
         font-weight: 700;
@@ -106,37 +212,47 @@
         white-space: nowrap;
     }
 
+    /* Надпись "ПОДАЧА" — видна только у подающей команды */
     .serve-indicator {
         font-size: 12px;
         font-weight: 700;
         color: #8ab4a0;
         letter-spacing: 1px;
         height: 16px;
-        opacity: 0;
+        opacity: 0;                 /* по умолчанию невидима */
         transition: opacity 0.2s;
         text-transform: uppercase;
         margin-top: 2px;
     }
+    .score-card.serving .serve-indicator {
+        opacity: 1;                 /* у подающей — показываем */
+    }
 
-    .score-card.serving .serve-indicator { opacity: 1; }
-
+    /* ============================================================
+       ЦИФРА СЧЁТА (большая по центру)
+       ============================================================ */
     .points {
         font-size: 96px;
         font-weight: 800;
         line-height: 1;
         color: #e8eaed;
-        font-variant-numeric: tabular-nums;
-        margin-top: 30px;
+        font-variant-numeric: tabular-nums;   /* цифры одинаковой ширины */
+        margin-top: 30px;                     /* сдвиг вниз, к центру */
+    }
+    .score-card.serving .points {
+        color: #a8d5be;                       /* у подающей команды — светлее */
     }
 
-    .score-card.serving .points { color: #a8d5be; }
-
+    /* ============================================================
+       НИЖНЯЯ ПАНЕЛЬ С КНОПКАМИ
+       ============================================================ */
     .controls {
         display: flex;
         gap: 8px;
         margin-top: 14px;
     }
 
+    /* Обычная кнопка (отмена, настройки, смена подачи) */
     .control-button {
         flex: 1;
         border: none;
@@ -148,14 +264,26 @@
         background: #2e343a;
         color: #e8eaed;
         cursor: pointer;
+        /* Шрифт с юникод-символами (↶ ⚙ ↻) */
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Symbol", sans-serif;
     }
+    .control-button:active {
+        transform: scale(0.97);
+        background: #383f47;
+    }
 
-    .control-button:active { transform: scale(0.97); background: #383f47; }
+    /* Кнопка "Новая игра" — красная */
+    .reset {
+        background: #8b4a4a;
+        color: #ffffff;
+    }
+    .reset:active {
+        background: #723c3c;
+    }
 
-    .reset { background: #8b4a4a; color: #ffffff; }
-    .reset:active { background: #723c3c; }
-
+    /* ============================================================
+       СООБЩЕНИЕ ПОСЕРЕДИНЕ (например, "Новая игра", "Сохранено")
+       ============================================================ */
     .message {
         text-align: center;
         min-height: 22px;
@@ -166,9 +294,15 @@
         letter-spacing: 0.5px;
     }
 
+    /* ============================================================
+       МОДАЛЬНОЕ ОКНО НАСТРОЕК
+       ============================================================
+       .modal-overlay — затемнённый фон на весь экран.
+       По умолчанию display:none, показывается через .open.
+       ============================================================ */
     .modal-overlay {
         position: fixed;
-        inset: 0;
+        top: 0; right: 0; bottom: 0; left: 0;
         background: rgba(0,0,0,0.7);
         display: none;
         align-items: center;
@@ -176,8 +310,9 @@
         z-index: 100;
         padding: 20px;
     }
-
-    .modal-overlay.open { display: flex; }
+    .modal-overlay.open {
+        display: flex;
+    }
 
     .modal {
         background: #262b30;
@@ -198,6 +333,7 @@
         letter-spacing: 1px;
     }
 
+    /* Заголовок раздела внутри настроек (Команды, Игроки, Интерфейс) */
     .modal h3 {
         margin: 18px 0 10px;
         font-size: 13px;
@@ -208,8 +344,10 @@
         padding-top: 14px;
     }
 
-    .field { margin-bottom: 14px; }
-
+    /* Поле ввода (label + input) */
+    .field {
+        margin-bottom: 14px;
+    }
     .field label {
         display: block;
         font-size: 13px;
@@ -217,7 +355,6 @@
         margin-bottom: 5px;
         letter-spacing: 0.5px;
     }
-
     .field input {
         width: 100%;
         background: #1a1d21;
@@ -229,22 +366,22 @@
         font-weight: 600;
         outline: none;
     }
+    .field input:focus {
+        border-color: #8ab4a0;
+    }
 
-    .field input:focus { border-color: #8ab4a0; }
-
+    /* Переключатель (тумблер вкл/выкл) */
     .toggle-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 12px 0;
     }
-
     .toggle-row span {
         font-size: 14px;
         color: #e8eaed;
         font-weight: 600;
     }
-
     .toggle {
         position: relative;
         width: 50px;
@@ -255,7 +392,7 @@
         transition: background 0.2s;
         flex-shrink: 0;
     }
-
+    /* Кругляшок внутри тумблера */
     .toggle::after {
         content: "";
         position: absolute;
@@ -267,12 +404,20 @@
         border-radius: 50%;
         transition: transform 0.2s;
     }
+    /* Тумблер включён */
+    .toggle.on {
+        background: #4a7c59;
+    }
+    .toggle.on::after {
+        transform: translateX(22px);
+    }
 
-    .toggle.on { background: #4a7c59; }
-    .toggle.on::after { transform: translateX(22px); }
-
-    .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
-
+    /* Кнопки внизу модального окна (Отмена / Сохранить) */
+    .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
     .modal-buttons button {
         flex: 1;
         border: none;
@@ -284,56 +429,57 @@
         background: #2e343a;
         color: #e8eaed;
     }
+    .modal-buttons .save {
+        background: #4a7c59;
+        color: #fff;
+    }
 
-    .modal-buttons .save { background: #4a7c59; color: #fff; }
+    /* Утилита — скрыть элемент */
+    .hidden {
+        display: none !important;
+    }
 
-    .hidden { display: none !important; }
-
-    /* --- Ландшафтный режим: карточки не на всю высоту --- */
+    /* ============================================================
+       ЛАНДШАФТНЫЙ РЕЖИМ (телефон лежит на боку)
+       ============================================================
+       Здесь меняем размеры, чтобы карточки не растягивались
+       на всю высоту экрана, оставляя место сверху и снизу.
+       ============================================================ */
     @media (orientation: landscape) {
         .app {
             padding: 12px 40px 14px;
             max-width: 900px;
         }
-
         h1 {
             font-size: 18px;
             margin: 0 0 10px;
         }
-
         .scoreboard {
-            max-height: 60vh;
+            max-height: 60vh;          /* карточки не выше 60% экрана */
             margin: 0 auto;
             width: 100%;
         }
-
         .score-card {
             min-height: 0;
             padding: 14px 10px;
         }
-
         .card-top {
             top: 14px;
         }
-
         .team-label { font-size: 11px; height: 14px; margin-bottom: 2px; }
         .server-name { font-size: 13px; height: 17px; }
         .serve-indicator { font-size: 11px; height: 14px; }
-
         .points {
             font-size: 72px;
             margin-top: 20px;
         }
-
         .controls {
             margin-top: 10px;
         }
-
         .control-button {
             padding: 12px 6px;
             font-size: 22px;
         }
-
         .message {
             min-height: 18px;
             font-size: 13px;
@@ -341,7 +487,7 @@
         }
     }
 
-    /* --- Очень узкие ландшафтные экраны (iPhone SE и т.п.) --- */
+    /* Очень низкие ландшафтные экраны (iPhone SE) */
     @media (orientation: landscape) and (max-height: 400px) {
         .scoreboard { max-height: 55vh; }
         .points { font-size: 60px; margin-top: 14px; }
@@ -354,18 +500,26 @@
 <body>
 
 <div class="app">
+
+    <!-- ЗАГОЛОВОК -->
     <h1>🎾 Padel Score</h1>
 
+    <!-- ИГРОВОЕ ПОЛЕ: ДВЕ КАРТОЧКИ -->
     <div class="scoreboard">
+
+        <!-- === КАРТОЧКА КОМАНДЫ 1 === -->
         <div class="score-card" id="card0">
+            <!-- Верхний блок: название команды, подающий, "подача" -->
             <div class="card-top">
                 <div class="team-label" id="teamLabel0">Команда 1</div>
                 <div class="server-name" id="server0">—</div>
                 <div class="serve-indicator">подача</div>
             </div>
+            <!-- Большой счёт -->
             <div class="points" id="score0">0</div>
         </div>
 
+        <!-- === КАРТОЧКА КОМАНДЫ 2 === -->
         <div class="score-card" id="card1">
             <div class="card-top">
                 <div class="team-label" id="teamLabel1">Команда 2</div>
@@ -374,22 +528,35 @@
             </div>
             <div class="points" id="score1">0</div>
         </div>
+
     </div>
 
+    <!-- Сообщение (Новая игра / Сохранено) -->
     <div class="message" id="message"></div>
 
+    <!-- НИЖНИЕ КНОПКИ -->
     <div class="controls">
+        <!-- Кнопка смены подачи — скрыта по умолчанию, включается в настройках -->
         <button type="button" class="control-button hidden" id="btnSwitch" title="Смена подачи">S</button>
+        <!-- Отмена (↶) -->
         <button type="button" class="control-button" id="btnUndo" title="Отмена">&#x21B6;&#xFE0E;</button>
+        <!-- Настройки (⚙) -->
         <button type="button" class="control-button" id="btnSettings" title="Настройки">&#x2699;&#xFE0E;</button>
+        <!-- Новая игра (↻) -->
         <button type="button" class="control-button reset" id="btnReset" title="Новая игра">&#x21BB;&#xFE0E;</button>
     </div>
 </div>
 
+<!-- ============================================================
+     МОДАЛЬНОЕ ОКНО НАСТРОЕК
+     ============================================================
+     По умолчанию скрыто. Открывается кнопкой ⚙ внизу.
+     ============================================================ -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal">
         <h2>Настройки</h2>
 
+        <!-- --- Раздел "Команды" --- -->
         <h3>Команды</h3>
         <div class="field">
             <label>Название команды 1</label>
@@ -400,6 +567,7 @@
             <input id="teamName1" value="Команда 2" maxlength="16">
         </div>
 
+        <!-- --- Раздел "Игроки" --- -->
         <h3>Игроки</h3>
         <div class="field">
             <label>Команда 1 — Игрок 1</label>
@@ -418,12 +586,14 @@
             <input id="p4" value="Игрок 4" maxlength="16">
         </div>
 
+        <!-- --- Раздел "Интерфейс" --- -->
         <h3>Интерфейс</h3>
         <div class="toggle-row">
             <span>Показывать кнопку смены подачи</span>
             <div class="toggle" id="toggleSwitch"></div>
         </div>
 
+        <!-- Кнопки модалки -->
         <div class="modal-buttons">
             <button type="button" id="btnCancelSettings">Отмена</button>
             <button type="button" class="save" id="btnSaveSettings">Сохранить</button>
@@ -432,11 +602,47 @@
 </div>
 
 <script>
+/* ============================================================
+   ЛОГИКА ПРИЛОЖЕНИЯ
+   ============================================================
+   Весь код обёрнут в (function(){...})() — это "изолированная
+   область видимости". Ничего не попадает в глобальные переменные,
+   и код не конфликтует с другими скриптами.
+   "use strict" — строгий режим JavaScript, помогает находить ошибки.
+   ============================================================ */
 (function () {
     "use strict";
 
-    var STORAGE_KEY = "padel_score_v6";
+    /* ============================================================
+       КЛЮЧ ДЛЯ СОХРАНЕНИЯ В ПАМЯТЬ ТЕЛЕФОНА
+       ============================================================
+       localStorage — это встроенная память браузера.
+       Данные хранятся под ключом (строкой).
+       Меняй цифру (v7, v8...) если сильно изменишь структуру данных —
+       тогда старое сохранение не будет конфликтовать.
+       ============================================================ */
+    var STORAGE_KEY = "padel_score_v7";
 
+    /* ============================================================
+       СОСТОЯНИЕ ПРИЛОЖЕНИЯ
+       ============================================================
+       players — имена 4 игроков. Порядок:
+         [0] Игрок 1 (Команда 1)
+         [1] Игрок 2 (Команда 1)
+         [2] Игрок 3 (Команда 2)
+         [3] Игрок 4 (Команда 2)
+
+       teamNames — названия команд [Команда 1, Команда 2]
+
+       points — очки команд [очки команды 1, очки команды 2]
+
+       serverIndex — индекс игрока (0..3), который подаёт сейчас
+
+       history — стек для отмены действий. Каждый элемент —
+         снимок {points, serverIndex} до последнего действия.
+
+       showSwitchButton — показывать ли кнопку смены подачи
+       ============================================================ */
     var players = ["Игрок 1", "Игрок 2", "Игрок 3", "Игрок 4"];
     var teamNames = ["Команда 1", "Команда 2"];
     var points = [0, 0];
@@ -444,20 +650,41 @@
     var history = [];
     var showSwitchButton = false;
 
+    /* ============================================================
+       ПОРЯДОК ПОДАЧИ (крест-накрест между командами)
+       ============================================================
+       Игрок 1 → Игрок 3 → Игрок 2 → Игрок 4 → снова Игрок 1
+       В индексах: 0 → 2 → 1 → 3 → 0 ...
+       ============================================================ */
     var order = [0, 2, 1, 3];
 
+    /* Короткий помощник: $("score0") = document.getElementById("score0") */
     function $(id) { return document.getElementById(id); }
 
+    /* ============================================================
+       СЛЕДУЮЩИЙ ПОДАЮЩИЙ
+       ============================================================
+       Находим текущий индекс в order и возвращаем следующий по кругу.
+       ============================================================ */
     function nextServer(idx) {
         var pos = order.indexOf(idx);
         if (pos === -1) pos = 0;
         return order[(pos + 1) % 4];
     }
 
+    /* ============================================================
+       КАКОЙ КОМАНДЕ ПОДАЁТ ТЕКУЩИЙ ИГРОК
+       ============================================================
+       Игроки 0 и 1 — Команда 1 (индекс 0)
+       Игроки 2 и 3 — Команда 2 (индекс 1)
+       ============================================================ */
     function serverTeam() {
         return serverIndex < 2 ? 0 : 1;
     }
 
+    /* ============================================================
+       СОХРАНИТЬ СОСТОЯНИЕ В ИСТОРИЮ (для отмены)
+       ============================================================ */
     function saveHistory() {
         history.push({
             points: [points[0], points[1]],
@@ -465,6 +692,12 @@
         });
     }
 
+    /* ============================================================
+       ДОБАВИТЬ ОЧКО КОМАНДЕ
+       ============================================================
+       team = 0 (Команда 1) или 1 (Команда 2).
+       После добавления очка подача автоматически переходит дальше.
+       ============================================================ */
     function addPoint(team) {
         saveHistory();
         points[team] = points[team] + 1;
@@ -473,6 +706,9 @@
         saveState();
     }
 
+    /* ============================================================
+       РУЧНАЯ СМЕНА ПОДАЧИ
+       ============================================================ */
     function switchServe() {
         saveHistory();
         serverIndex = nextServer(serverIndex);
@@ -480,6 +716,9 @@
         saveState();
     }
 
+    /* ============================================================
+       ОТМЕНА ПОСЛЕДНЕГО ДЕЙСТВИЯ
+       ============================================================ */
     function undo() {
         if (history.length === 0) {
             showMessage("Нечего отменять");
@@ -492,6 +731,9 @@
         saveState();
     }
 
+    /* ============================================================
+       НОВАЯ ИГРА — сбросить всё
+       ============================================================ */
     function resetGame() {
         if (!confirm("Начать новую игру?")) return;
         points = [0, 0];
@@ -502,19 +744,28 @@
         showMessage("Новая игра");
     }
 
+    /* ============================================================
+       ПЕРЕРИСОВАТЬ ЭКРАН
+       ============================================================
+       Обновляет цифры, имена, подсветку подачи и видимость кнопки.
+       Вызывается после любого действия.
+       ============================================================ */
     function update() {
+        /* Очки команд */
         $("score0").textContent = points[0];
         $("score1").textContent = points[1];
 
+        /* Названия команд */
         $("teamLabel0").textContent = teamNames[0];
         $("teamLabel1").textContent = teamNames[1];
 
+        /* Имя подающего — показываем только у той команды, которая подаёт */
         var st = serverTeam();
         var name = players[serverIndex];
-
         $("server0").textContent = st === 0 ? name : "—";
         $("server1").textContent = st === 1 ? name : "—";
 
+        /* Подсветка карточки подающей команды */
         if (st === 0) {
             $("card0").classList.add("serving");
             $("card1").classList.remove("serving");
@@ -523,6 +774,7 @@
             $("card0").classList.remove("serving");
         }
 
+        /* Показывать ли кнопку смены подачи */
         if (showSwitchButton) {
             $("btnSwitch").classList.remove("hidden");
         } else {
@@ -530,6 +782,9 @@
         }
     }
 
+    /* ============================================================
+       ПОКАЗАТЬ СООБЩЕНИЕ НА 2 СЕКУНДЫ
+       ============================================================ */
     function showMessage(text) {
         var el = $("message");
         el.textContent = text;
@@ -538,6 +793,11 @@
         }, 2000);
     }
 
+    /* ============================================================
+       НАСТРОЙКИ: ОТКРЫТЬ / ЗАКРЫТЬ / СОХРАНИТЬ
+       ============================================================ */
+
+    /* Открыть окно настроек — заполнить поля текущими значениями */
     function openSettings() {
         $("teamName0").value = teamNames[0];
         $("teamName1").value = teamNames[1];
@@ -553,6 +813,7 @@
         $("settingsModal").classList.remove("open");
     }
 
+    /* Сохранить настройки — прочитать поля и применить */
     function saveSettings() {
         teamNames[0] = $("teamName0").value.trim() || "Команда 1";
         teamNames[1] = $("teamName1").value.trim() || "Команда 2";
@@ -567,6 +828,12 @@
         showMessage("Сохранено");
     }
 
+    /* ============================================================
+       СОХРАНЕНИЕ В ПАМЯТЬ ТЕЛЕФОНА (localStorage)
+       ============================================================
+       Сохраняем весь "снимок" состояния в виде JSON-строки.
+       try/catch — на случай, если localStorage отключён.
+       ============================================================ */
     function saveState() {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({
@@ -576,9 +843,12 @@
                 serverIndex: serverIndex,
                 showSwitchButton: showSwitchButton
             }));
-        } catch (e) { console.warn("save error", e); }
+        } catch (e) {
+            console.warn("Не удалось сохранить", e);
+        }
     }
 
+    /* Загрузить сохранённое состояние при запуске */
     function loadState() {
         try {
             var raw = localStorage.getItem(STORAGE_KEY);
@@ -589,35 +859,60 @@
             if (Array.isArray(s.points) && s.points.length === 2) points = s.points;
             if (typeof s.serverIndex === "number") serverIndex = s.serverIndex;
             if (typeof s.showSwitchButton === "boolean") showSwitchButton = s.showSwitchButton;
-        } catch (e) { console.warn("load error", e); }
+        } catch (e) {
+            console.warn("Не удалось загрузить", e);
+        }
     }
 
+    /* ============================================================
+       ПРИВЯЗКА КНОПОК К ДЕЙСТВИЯМ
+       ============================================================
+       addEventListener — "слушай событие click и вызывай функцию".
+       Лучше, чем onclick="", потому что можно вешать несколько
+       обработчиков и не засорять HTML.
+       ============================================================ */
     function bind() {
+        /* Тап по всей карточке команды = +1 очко */
         $("card0").addEventListener("click", function () { addPoint(0); });
         $("card1").addEventListener("click", function () { addPoint(1); });
 
+        /* Кнопки внизу */
         $("btnSwitch").addEventListener("click", switchServe);
         $("btnUndo").addEventListener("click", undo);
         $("btnReset").addEventListener("click", resetGame);
         $("btnSettings").addEventListener("click", openSettings);
+
+        /* Кнопки в модалке настроек */
         $("btnCancelSettings").addEventListener("click", closeSettings);
         $("btnSaveSettings").addEventListener("click", saveSettings);
+
+        /* Тумблер — переключается по тапу */
         $("toggleSwitch").addEventListener("click", function () {
             this.classList.toggle("on");
         });
     }
 
+    /* ============================================================
+       ОЧИСТКА СТАРЫХ СОХРАНЕНИЙ
+       ============================================================
+       Удаляем старые ключи от предыдущих версий, чтобы не мешали.
+       Если версия новая и данные старые — они просто игнорируются.
+       ============================================================ */
     try {
         localStorage.removeItem("padel_score_state");
         localStorage.removeItem("padel_score_v2");
         localStorage.removeItem("padel_score_v3");
         localStorage.removeItem("padel_score_v4");
         localStorage.removeItem("padel_score_v5");
+        localStorage.removeItem("padel_score_v6");
     } catch (e) {}
 
-    bind();
-    loadState();
-    update();
+    /* ============================================================
+       СТАРТ ПРИЛОЖЕНИЯ
+       ============================================================ */
+    bind();       /* привязываем кнопки */
+    loadState();  /* загружаем сохранение */
+    update();     /* рисуем интерфейс */
 
 })();
 </script>
