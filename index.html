@@ -540,9 +540,42 @@
         letter-spacing: 1px;
     }
 
-    /* Кнопка "Готово" в шторке — выравниваем по верху, если нет заголовка */
-    .sheet .btn-close-sheet {
-        margin-top: 0;
+    .sheet .btn-close-sheet { margin-top: 0; }
+
+    /* Вариант языка */
+    .lang-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        background: var(--input-bg);
+        border: 2px solid var(--modal-border);
+        border-radius: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .lang-option:active { background: var(--btn-bg); }
+    .lang-option.selected { border-color: var(--accent); }
+
+    .lang-option .lang-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .lang-option .lang-flag {
+        font-size: 22px;
+        line-height: 1;
+    }
+
+    .lang-option .check {
+        color: var(--accent);
+        font-size: 18px;
+        font-weight: 800;
     }
 
     .theme-option {
@@ -744,7 +777,7 @@
 <body>
 
 <div class="app">
-    <h1>🎾 Padel Score</h1>
+    <h1 id="appTitle">🎾 Padel Score</h1>
 
     <div class="scoreboard">
         <div class="score-card" id="card0">
@@ -752,7 +785,7 @@
                 <div class="team-label" id="teamLabel0">Команда 1</div>
                 <div class="server-name" id="server0">—</div>
                 <div class="serve-indicator">
-                    подача<span class="serve-numeral" id="numeral0"></span>
+                    <span id="serveWord0">подача</span><span class="serve-numeral" id="numeral0"></span>
                 </div>
             </div>
             <div class="points" id="score0">0</div>
@@ -763,7 +796,7 @@
                 <div class="team-label" id="teamLabel1">Команда 2</div>
                 <div class="server-name" id="server1">—</div>
                 <div class="serve-indicator">
-                    подача<span class="serve-numeral" id="numeral1"></span>
+                    <span id="serveWord1">подача</span><span class="serve-numeral" id="numeral1"></span>
                 </div>
             </div>
             <div class="points" id="score1">0</div>
@@ -771,35 +804,35 @@
     </div>
 
     <div class="timer-bar" id="timerBar">
-        <button type="button" class="timer-btn" id="btnTimerToggle" title="Старт/пауза">&#x25B6;&#xFE0E;</button>
+        <button type="button" class="timer-btn" id="btnTimerToggle" title="Start/Pause">&#x25B6;&#xFE0E;</button>
         <div class="timer-display" id="timerDisplay">00:00</div>
-        <button type="button" class="timer-btn" id="btnTimerReset" title="Сброс">&#x21BA;&#xFE0E;</button>
+        <button type="button" class="timer-btn" id="btnTimerReset" title="Reset">&#x21BA;&#xFE0E;</button>
     </div>
 
     <div class="message" id="message"></div>
 
     <div class="controls">
-        <button type="button" class="control-button hidden" id="btnSwitch" title="Смена подачи">S</button>
-        <button type="button" class="control-button" id="btnUndo" title="Отмена">&#x21B6;&#xFE0E;</button>
-        <button type="button" class="control-button" id="btnSettings" title="Настройки">&#x2699;&#xFE0E;</button>
-        <button type="button" class="control-button reset" id="btnReset" title="Новая игра">&#x21BB;&#xFE0E;</button>
+        <button type="button" class="control-button hidden" id="btnSwitch" title="Switch serve">S</button>
+        <button type="button" class="control-button" id="btnUndo" title="Undo">&#x21B6;&#xFE0E;</button>
+        <button type="button" class="control-button" id="btnSettings" title="Settings">&#x2699;&#xFE0E;</button>
+        <button type="button" class="control-button reset" id="btnReset" title="New game">&#x21BB;&#xFE0E;</button>
     </div>
 </div>
 
 <!-- ГЛАВНОЕ МЕНЮ -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal">
-        <h2>Настройки</h2>
+        <h2 id="menuTitle">Настройки</h2>
 
         <button type="button" class="save-match-btn" id="btnSaveMatchMenu">
             <span class="btn-icon">&#x1F4BE;&#xFE0E;</span>
-            <span>Сохранить матч</span>
+            <span id="saveMatchLabel">Сохранить матч</span>
         </button>
 
         <div class="menu-item" id="menuRoster">
             <span class="menu-left">
                 <span class="menu-icon">&#x1F464;&#xFE0E;</span>
-                <span>Состав</span>
+                <span id="menuRosterLabel">Состав</span>
             </span>
             <span class="arrow">&#x203A;</span>
         </div>
@@ -807,8 +840,16 @@
         <div class="menu-item" id="menuMatches">
             <span class="menu-left">
                 <span class="menu-icon">&#x1F4C4;&#xFE0E;</span>
-                <span>Матчи</span>
+                <span id="menuMatchesLabel">Матчи</span>
                 <span class="menu-badge hidden" id="matchesCount">0</span>
+            </span>
+            <span class="arrow">&#x203A;</span>
+        </div>
+
+        <div class="menu-item" id="menuLanguage">
+            <span class="menu-left">
+                <span class="menu-icon">&#x1F310;&#xFE0E;</span>
+                <span id="menuLanguageLabel">Язык</span>
             </span>
             <span class="arrow">&#x203A;</span>
         </div>
@@ -816,7 +857,7 @@
         <div class="menu-item" id="menuInterface">
             <span class="menu-left">
                 <span class="menu-icon">&#x2699;&#xFE0E;</span>
-                <span>Интерфейс</span>
+                <span id="menuInterfaceLabel">Интерфейс</span>
             </span>
             <span class="arrow">&#x203A;</span>
         </div>
@@ -824,7 +865,7 @@
         <div class="menu-item" id="menuTheme">
             <span class="menu-left">
                 <span class="menu-icon">&#x25D0;&#xFE0E;</span>
-                <span>Тема</span>
+                <span id="menuThemeLabel">Тема</span>
             </span>
             <span class="arrow">&#x203A;</span>
         </div>
@@ -835,40 +876,80 @@
     </div>
 </div>
 
-<!-- ШТОРКА: СОСТАВ (без заголовка — чтобы кнопка Готово была видна сразу) -->
+<!-- ШТОРКА: СОСТАВ -->
 <div class="sheet-overlay" id="sheetRoster">
     <div class="sheet">
 
         <div class="team-group">
-            <div class="team-group-title">Команда 1</div>
+            <div class="team-group-title" id="rosterGroup1">Команда 1</div>
             <div class="field">
-                <label>Название команды</label>
+                <label id="labelTeamName0">Название команды</label>
                 <input id="teamName0" value="Команда 1" maxlength="16">
             </div>
             <div class="field">
-                <label>Команда 1 — Игрок 1</label>
+                <label id="labelP1">Команда 1 — Игрок 1</label>
                 <input id="p1" value="Игрок 1" maxlength="16">
             </div>
             <div class="field">
-                <label>Команда 1 — Игрок 2</label>
+                <label id="labelP2">Команда 1 — Игрок 2</label>
                 <input id="p2" value="Игрок 2" maxlength="16">
             </div>
         </div>
 
         <div class="team-group">
-            <div class="team-group-title">Команда 2</div>
+            <div class="team-group-title" id="rosterGroup2">Команда 2</div>
             <div class="field">
-                <label>Название команды</label>
+                <label id="labelTeamName1">Название команды</label>
                 <input id="teamName1" value="Команда 2" maxlength="16">
             </div>
             <div class="field">
-                <label>Команда 2 — Игрок 3</label>
+                <label id="labelP3">Команда 2 — Игрок 3</label>
                 <input id="p3" value="Игрок 3" maxlength="16">
             </div>
             <div class="field">
-                <label>Команда 2 — Игрок 4</label>
+                <label id="labelP4">Команда 2 — Игрок 4</label>
                 <input id="p4" value="Игрок 4" maxlength="16">
             </div>
+        </div>
+
+        <div class="modal-buttons">
+            <button type="button" class="btn-close-sheet">Готово</button>
+        </div>
+    </div>
+</div>
+
+<!-- ШТОРКА: ЯЗЫК -->
+<div class="sheet-overlay" id="sheetLanguage">
+    <div class="sheet">
+        <h2 id="sheetLanguageTitle">Язык</h2>
+
+        <div class="lang-option" data-lang="en">
+            <span class="lang-left">
+                <span class="lang-flag">🇬🇧</span>
+                <span>English</span>
+            </span>
+            <span class="check" id="checkLangEn"></span>
+        </div>
+        <div class="lang-option" data-lang="es">
+            <span class="lang-left">
+                <span class="lang-flag">🇪🇸</span>
+                <span>Español</span>
+            </span>
+            <span class="check" id="checkLangEs"></span>
+        </div>
+        <div class="lang-option" data-lang="ru">
+            <span class="lang-left">
+                <span class="lang-flag">🇷🇺</span>
+                <span>Русский</span>
+            </span>
+            <span class="check" id="checkLangRu"></span>
+        </div>
+        <div class="lang-option" data-lang="uk">
+            <span class="lang-left">
+                <span class="lang-flag">🇺🇦</span>
+                <span>Українська</span>
+            </span>
+            <span class="check" id="checkLangUk"></span>
         </div>
 
         <div class="modal-buttons">
@@ -880,13 +961,13 @@
 <!-- ШТОРКА: ИНТЕРФЕЙС -->
 <div class="sheet-overlay" id="sheetInterface">
     <div class="sheet">
-        <h2>Интерфейс</h2>
+        <h2 id="sheetInterfaceTitle">Интерфейс</h2>
         <div class="toggle-row">
-            <span>Показывать таймер</span>
+            <span id="toggleTimerLabel">Показывать таймер</span>
             <div class="toggle" id="toggleTimer"></div>
         </div>
         <div class="toggle-row">
-            <span>Показывать кнопку смены подачи</span>
+            <span id="toggleSwitchLabel">Показывать кнопку смены подачи</span>
             <div class="toggle" id="toggleSwitch"></div>
         </div>
         <div class="modal-buttons">
@@ -898,13 +979,13 @@
 <!-- ШТОРКА: ТЕМА -->
 <div class="sheet-overlay" id="sheetTheme">
     <div class="sheet">
-        <h2>Тема</h2>
-        <div class="theme-option" id="themeDark" data-theme="dark">
-            <span>Тёмная</span>
+        <h2 id="sheetThemeTitle">Тема</h2>
+        <div class="theme-option" id="themeDark">
+            <span id="themeDarkLabel">Тёмная</span>
             <span class="check" id="checkDark">&#x2713;</span>
         </div>
-        <div class="theme-option" id="themeLight" data-theme="light">
-            <span>Светлая</span>
+        <div class="theme-option" id="themeLight">
+            <span id="themeLightLabel">Светлая</span>
             <span class="check" id="checkLight"></span>
         </div>
         <div class="modal-buttons">
@@ -916,7 +997,7 @@
 <!-- ШТОРКА: СПИСОК МАТЧЕЙ -->
 <div class="sheet-overlay" id="sheetMatches">
     <div class="sheet">
-        <h2>Сохранённые матчи</h2>
+        <h2 id="sheetMatchesTitle">Сохранённые матчи</h2>
 
         <div id="matchesList"></div>
 
@@ -934,9 +1015,166 @@
 (function () {
     "use strict";
 
-    var STORAGE_KEY = "padel_score_v15";
+    var STORAGE_KEY = "padel_score_v16";
     var MATCHES_KEY = "padel_matches_v1";
 
+    /* ============================================================
+       ПЕРЕВОДЫ
+       ============================================================ */
+    var TRANSLATIONS = {
+        en: {
+            title: "🎾 Padel Score",
+            menuTitle: "Settings",
+            saveMatch: "Save match",
+            menuRoster: "Roster",
+            menuMatches: "Matches",
+            menuLanguage: "Language",
+            menuInterface: "Interface",
+            menuTheme: "Theme",
+            close: "Close",
+            done: "Done",
+            rosterGroup: "Team",
+            teamNameLabel: "Team name",
+            playerLabel: "Player",
+            teamNameDefault: "Team",
+            playerDefault: "Player",
+            serveWord: "serve",
+            sheetLanguageTitle: "Language",
+            sheetInterfaceTitle: "Interface",
+            sheetThemeTitle: "Theme",
+            sheetMatchesTitle: "Saved matches",
+            toggleTimer: "Show timer",
+            toggleSwitch: "Show serve switch button",
+            themeDark: "Dark",
+            themeLight: "Light",
+            clearAll: "Clear all",
+            matchSaved: "Match saved",
+            nothingToUndo: "Nothing to undo",
+            newGame: "New game",
+            saved: "Saved",
+            allMatchesDeleted: "All matches deleted",
+            noMatches: "No saved matches yet",
+            nothingToSave: "Score 0:0 — nothing to save",
+            newGameConfirm: "Start a new game?",
+            deleteMatchConfirm: "Delete this match?",
+            clearAllConfirm: "Delete all saved matches?"
+        },
+        es: {
+            title: "🎾 Padel Score",
+            menuTitle: "Ajustes",
+            saveMatch: "Guardar partido",
+            menuRoster: "Alineación",
+            menuMatches: "Partidos",
+            menuLanguage: "Idioma",
+            menuInterface: "Interfaz",
+            menuTheme: "Tema",
+            close: "Cerrar",
+            done: "Listo",
+            rosterGroup: "Equipo",
+            teamNameLabel: "Nombre del equipo",
+            playerLabel: "Jugador",
+            teamNameDefault: "Equipo",
+            playerDefault: "Jugador",
+            serveWord: "saque",
+            sheetLanguageTitle: "Idioma",
+            sheetInterfaceTitle: "Interfaz",
+            sheetThemeTitle: "Tema",
+            sheetMatchesTitle: "Partidos guardados",
+            toggleTimer: "Mostrar cronómetro",
+            toggleSwitch: "Mostrar botón de cambio de saque",
+            themeDark: "Oscuro",
+            themeLight: "Claro",
+            clearAll: "Borrar todo",
+            matchSaved: "Partido guardado",
+            nothingToUndo: "Nada que deshacer",
+            newGame: "Nuevo partido",
+            saved: "Guardado",
+            allMatchesDeleted: "Todos los partidos borrados",
+            noMatches: "Aún no hay partidos guardados",
+            nothingToSave: "Marcador 0:0 — no hay nada que guardar",
+            newGameConfirm: "¿Empezar un nuevo partido?",
+            deleteMatchConfirm: "¿Borrar este partido?",
+            clearAllConfirm: "¿Borrar todos los partidos guardados?"
+        },
+        ru: {
+            title: "🎾 Padel Score",
+            menuTitle: "Настройки",
+            saveMatch: "Сохранить матч",
+            menuRoster: "Состав",
+            menuMatches: "Матчи",
+            menuLanguage: "Язык",
+            menuInterface: "Интерфейс",
+            menuTheme: "Тема",
+            close: "Закрыть",
+            done: "Готово",
+            rosterGroup: "Команда",
+            teamNameLabel: "Название команды",
+            playerLabel: "Игрок",
+            teamNameDefault: "Команда",
+            playerDefault: "Игрок",
+            serveWord: "подача",
+            sheetLanguageTitle: "Язык",
+            sheetInterfaceTitle: "Интерфейс",
+            sheetThemeTitle: "Тема",
+            sheetMatchesTitle: "Сохранённые матчи",
+            toggleTimer: "Показывать таймер",
+            toggleSwitch: "Показывать кнопку смены подачи",
+            themeDark: "Тёмная",
+            themeLight: "Светлая",
+            clearAll: "Очистить все",
+            matchSaved: "Матч сохранён",
+            nothingToUndo: "Нечего отменять",
+            newGame: "Новая игра",
+            saved: "Сохранено",
+            allMatchesDeleted: "Все матчи удалены",
+            noMatches: "Пока нет сохранённых матчей",
+            nothingToSave: "Счёт 0:0 — нечего сохранять",
+            newGameConfirm: "Начать новую игру?",
+            deleteMatchConfirm: "Удалить этот матч?",
+            clearAllConfirm: "Удалить все сохранённые матчи?"
+        },
+        uk: {
+            title: "🎾 Padel Score",
+            menuTitle: "Налаштування",
+            saveMatch: "Зберегти матч",
+            menuRoster: "Склад",
+            menuMatches: "Матчі",
+            menuLanguage: "Мова",
+            menuInterface: "Інтерфейс",
+            menuTheme: "Тема",
+            close: "Закрити",
+            done: "Готово",
+            rosterGroup: "Команда",
+            teamNameLabel: "Назва команди",
+            playerLabel: "Гравець",
+            teamNameDefault: "Команда",
+            playerDefault: "Гравець",
+            serveWord: "подача",
+            sheetLanguageTitle: "Мова",
+            sheetInterfaceTitle: "Інтерфейс",
+            sheetThemeTitle: "Тема",
+            sheetMatchesTitle: "Збережені матчі",
+            toggleTimer: "Показувати таймер",
+            toggleSwitch: "Показувати кнопку зміни подачі",
+            themeDark: "Темна",
+            themeLight: "Світла",
+            clearAll: "Очистити всі",
+            matchSaved: "Матч збережено",
+            nothingToUndo: "Нічого скасовувати",
+            newGame: "Нова гра",
+            saved: "Збережено",
+            allMatchesDeleted: "Всі матчі видалено",
+            noMatches: "Поки немає збережених матчів",
+            nothingToSave: "Рахунок 0:0 — немає що зберігати",
+            newGameConfirm: "Почати нову гру?",
+            deleteMatchConfirm: "Видалити цей матч?",
+            clearAllConfirm: "Видалити всі збережені матчі?"
+        }
+    };
+
+    /* ============================================================
+       СОСТОЯНИЕ
+       ============================================================ */
     var players = ["Игрок 1", "Игрок 2", "Игрок 3", "Игрок 4"];
     var teamNames = ["Команда 1", "Команда 2"];
     var points = [0, 0];
@@ -946,6 +1184,7 @@
     var showSwitchButton = false;
     var showTimer = false;
     var currentTheme = "dark";
+    var currentLang = "en";
     var matchStartTime = null;
 
     var timerSeconds = 0;
@@ -956,6 +1195,11 @@
     var romanNumerals = ["", "Ⅰ", "Ⅱ"];
 
     function $(id) { return document.getElementById(id); }
+
+    function t(key) {
+        var lang = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+        return lang[key] || TRANSLATIONS.en[key] || key;
+    }
 
     function nextServer(idx) {
         var pos = order.indexOf(idx);
@@ -979,17 +1223,14 @@
         if (matchStartTime === null) {
             matchStartTime = Date.now();
         }
-
         saveHistory();
         points[team] = points[team] + 1;
-
         if (serveCount === 1) {
             serveCount = 2;
         } else {
             serveCount = 1;
             serverIndex = nextServer(serverIndex);
         }
-
         update();
         saveState();
     }
@@ -1004,7 +1245,7 @@
 
     function undo() {
         if (history.length === 0) {
-            showMessage("Нечего отменять");
+            showMessage(t("nothingToUndo"));
             return;
         }
         var prev = history.pop();
@@ -1016,7 +1257,7 @@
     }
 
     function resetGame() {
-        if (!confirm("Начать новую игру?")) return;
+        if (!confirm(t("newGameConfirm"))) return;
         points = [0, 0];
         serverIndex = 0;
         serveCount = 1;
@@ -1024,7 +1265,7 @@
         matchStartTime = null;
         update();
         saveState();
-        showMessage("Новая игра");
+        showMessage(t("newGame"));
     }
 
     /* Дата/время */
@@ -1060,13 +1301,11 @@
 
     function saveCurrentMatch() {
         if (points[0] === 0 && points[1] === 0) {
-            showMessage("Счёт 0:0 — нечего сохранять");
+            showMessage(t("nothingToSave"));
             return;
         }
-
         var now = Date.now();
         var start = matchStartTime || now;
-
         var match = {
             id: now,
             startTime: start,
@@ -1075,18 +1314,16 @@
             players: [players[0], players[1], players[2], players[3]],
             points: [points[0], points[1]]
         };
-
         var matches = loadMatches();
         matches.unshift(match);
         saveMatches(matches);
-
         renderMatchesList();
         updateMatchesCount();
-        showMessage("Матч сохранён");
+        showMessage(t("matchSaved"));
     }
 
     function deleteMatch(id) {
-        if (!confirm("Удалить этот матч?")) return;
+        if (!confirm(t("deleteMatchConfirm"))) return;
         var matches = loadMatches();
         matches = matches.filter(function (m) { return m.id !== id; });
         saveMatches(matches);
@@ -1095,11 +1332,11 @@
     }
 
     function clearAllMatches() {
-        if (!confirm("Удалить все сохранённые матчи?")) return;
+        if (!confirm(t("clearAllConfirm"))) return;
         saveMatches([]);
         renderMatchesList();
         updateMatchesCount();
-        showMessage("Все матчи удалены");
+        showMessage(t("allMatchesDeleted"));
     }
 
     function renderMatchesList() {
@@ -1107,7 +1344,7 @@
         var matches = loadMatches();
 
         if (matches.length === 0) {
-            list.innerHTML = '<div class="empty-matches">Пока нет сохранённых матчей</div>';
+            list.innerHTML = '<div class="empty-matches">' + t("noMatches") + '</div>';
             $("clearAllRow").style.display = "none";
             return;
         }
@@ -1122,7 +1359,7 @@
             var players2 = m.players[2] + ", " + m.players[3];
 
             html += '<div class="match-card">';
-            html += '<button type="button" class="match-delete" data-id="' + m.id + '" title="Удалить">&#x2715;&#xFE0E;</button>';
+            html += '<button type="button" class="match-delete" data-id="' + m.id + '" title="Delete">&#x2715;&#xFE0E;</button>';
             html += '<div class="match-date">' + dateStr + '</div>';
             html += '<div class="match-score">';
             html += '<span class="match-team-name">' + escapeHtml(m.teamNames[0]) + '</span>';
@@ -1203,6 +1440,113 @@
         }
     }
 
+    /* ============================================================
+       ПРИМЕНЕНИЕ ПЕРЕВОДОВ К ЭКРАНУ
+       ============================================================ */
+    function applyTranslations() {
+        /* Основной экран */
+        $("serveWord0").textContent = t("serveWord");
+        $("serveWord1").textContent = t("serveWord");
+
+        /* Главное меню */
+        $("menuTitle").textContent = t("menuTitle");
+        $("saveMatchLabel").textContent = t("saveMatch");
+        $("menuRosterLabel").textContent = t("menuRoster");
+        $("menuMatchesLabel").textContent = t("menuMatches");
+        $("menuLanguageLabel").textContent = t("menuLanguage");
+        $("menuInterfaceLabel").textContent = t("menuInterface");
+        $("menuThemeLabel").textContent = t("menuTheme");
+        $("btnCloseSettings").textContent = t("close");
+
+        /* Шторка состава */
+        $("rosterGroup1").textContent = t("rosterGroup") + " 1";
+        $("rosterGroup2").textContent = t("rosterGroup") + " 2";
+        $("labelTeamName0").textContent = t("teamNameLabel");
+        $("labelTeamName1").textContent = t("teamNameLabel");
+        $("labelP1").textContent = t("rosterGroup") + " 1 — " + t("playerLabel") + " 1";
+        $("labelP2").textContent = t("rosterGroup") + " 1 — " + t("playerLabel") + " 2";
+        $("labelP3").textContent = t("rosterGroup") + " 2 — " + t("playerLabel") + " 3";
+        $("labelP4").textContent = t("rosterGroup") + " 2 — " + t("playerLabel") + " 4";
+
+        /* Шторка языка */
+        $("sheetLanguageTitle").textContent = t("sheetLanguageTitle");
+
+        /* Шторка интерфейса */
+        $("sheetInterfaceTitle").textContent = t("sheetInterfaceTitle");
+        $("toggleTimerLabel").textContent = t("toggleTimer");
+        $("toggleSwitchLabel").textContent = t("toggleSwitch");
+
+        /* Шторка темы */
+        $("sheetThemeTitle").textContent = t("sheetThemeTitle");
+        $("themeDarkLabel").textContent = t("themeDark");
+        $("themeLightLabel").textContent = t("themeLight");
+
+        /* Шторка матчей */
+        $("sheetMatchesTitle").textContent = t("sheetMatchesTitle");
+        $("btnClearMatches").textContent = t("clearAll");
+
+        /* Все кнопки "Готово" во всех шторках */
+        var doneButtons = document.querySelectorAll(".btn-close-sheet");
+        for (var i = 0; i < doneButtons.length; i++) {
+            doneButtons[i].textContent = t("done");
+        }
+
+        /* Перерисовываем список матчей с новыми переводами */
+        renderMatchesList();
+    }
+
+    /* ============================================================
+       ПЕРЕВОД ШАБЛОННЫХ ЗНАЧЕНИЙ (Вариант B)
+       ============================================================
+       Если название команды совпадает с шаблоном на ЛЮБОМ языке
+       ("Команда 1", "Team 1", "Equipo 1"...) — заменяем на текущий.
+       То же для игроков.
+       ============================================================ */
+    function isDefaultTeamName(value, teamNum) {
+        var patterns = [];
+        for (var lang in TRANSLATIONS) {
+            patterns.push(TRANSLATIONS[lang].teamNameDefault + " " + teamNum);
+            /* Также "Команда N" напрямую (ru/uk) */
+        }
+        /* Плюс исходные значения из дефолта */
+        patterns.push("Команда " + teamNum);
+        patterns.push("Team " + teamNum);
+        patterns.push("Equipo " + teamNum);
+        return patterns.indexOf(value) !== -1;
+    }
+
+    function isDefaultPlayerName(value, playerNum) {
+        var patterns = [];
+        for (var lang in TRANSLATIONS) {
+            patterns.push(TRANSLATIONS[lang].playerDefault + " " + playerNum);
+        }
+        patterns.push("Игрок " + playerNum);
+        patterns.push("Player " + playerNum);
+        patterns.push("Jugador " + playerNum);
+        patterns.push("Гравець " + playerNum);
+        return patterns.indexOf(value) !== -1;
+    }
+
+    function translateDefaultValues() {
+        /* Команды */
+        if (isDefaultTeamName(teamNames[0], 1)) teamNames[0] = t("teamNameDefault") + " 1";
+        if (isDefaultTeamName(teamNames[1], 2)) teamNames[1] = t("teamNameDefault") + " 2";
+
+        /* Игроки */
+        if (isDefaultPlayerName(players[0], 1)) players[0] = t("playerDefault") + " 1";
+        if (isDefaultPlayerName(players[1], 2)) players[1] = t("playerDefault") + " 2";
+        if (isDefaultPlayerName(players[2], 3)) players[2] = t("playerDefault") + " 3";
+        if (isDefaultPlayerName(players[3], 4)) players[3] = t("playerDefault") + " 4";
+
+        /* Обновляем поля в шторке состава */
+        $("teamName0").value = teamNames[0];
+        $("teamName1").value = teamNames[1];
+        $("p1").value = players[0];
+        $("p2").value = players[1];
+        $("p3").value = players[2];
+        $("p4").value = players[3];
+    }
+
     function showMessage(text) {
         var el = $("message");
         el.textContent = text;
@@ -1256,6 +1600,35 @@
         renderTimer();
     }
 
+    /* Язык */
+    function applyLanguage(lang) {
+        currentLang = lang;
+        document.documentElement.lang = lang;
+
+        /* Обновляем метки чекбоксов */
+        var codes = ["En", "Es", "Ru", "Uk"];
+        var langCodes = ["en", "es", "ru", "uk"];
+        for (var i = 0; i < codes.length; i++) {
+            $("checkLang" + codes[i]).textContent = (currentLang === langCodes[i]) ? "✓" : "";
+        }
+
+        /* Подсвечиваем выбранный */
+        var langOpts = document.querySelectorAll(".lang-option");
+        for (var j = 0; j < langOpts.length; j++) {
+            langOpts[j].classList.toggle("selected", langOpts[j].getAttribute("data-lang") === lang);
+        }
+
+        /* Применяем переводы ко всему UI */
+        applyTranslations();
+
+        /* Переводим шаблонные названия команд/игроков */
+        translateDefaultValues();
+
+        /* Обновляем игровой экран */
+        update();
+        saveState();
+    }
+
     /* Настройки */
     function openSettings() {
         $("teamName0").value = teamNames[0];
@@ -1277,12 +1650,12 @@
     }
 
     function saveAllSettings() {
-        teamNames[0] = $("teamName0").value.trim() || "Команда 1";
-        teamNames[1] = $("teamName1").value.trim() || "Команда 2";
-        players[0] = $("p1").value.trim() || "Игрок 1";
-        players[1] = $("p2").value.trim() || "Игрок 2";
-        players[2] = $("p3").value.trim() || "Игрок 3";
-        players[3] = $("p4").value.trim() || "Игрок 4";
+        teamNames[0] = $("teamName0").value.trim() || (t("teamNameDefault") + " 1");
+        teamNames[1] = $("teamName1").value.trim() || (t("teamNameDefault") + " 2");
+        players[0] = $("p1").value.trim() || (t("playerDefault") + " 1");
+        players[1] = $("p2").value.trim() || (t("playerDefault") + " 2");
+        players[2] = $("p3").value.trim() || (t("playerDefault") + " 3");
+        players[3] = $("p4").value.trim() || (t("playerDefault") + " 4");
         update();
         saveState();
     }
@@ -1343,6 +1716,7 @@
                 showSwitchButton: showSwitchButton,
                 showTimer: showTimer,
                 currentTheme: currentTheme,
+                currentLang: currentLang,
                 matchStartTime: matchStartTime
             }));
         } catch (e) { console.warn("save error", e); }
@@ -1361,6 +1735,7 @@
             if (typeof s.showSwitchButton === "boolean") showSwitchButton = s.showSwitchButton;
             if (typeof s.showTimer === "boolean") showTimer = s.showTimer;
             if (typeof s.currentTheme === "string") currentTheme = s.currentTheme;
+            if (typeof s.currentLang === "string") currentLang = s.currentLang;
             if (typeof s.matchStartTime === "number") matchStartTime = s.matchStartTime;
         } catch (e) { console.warn("load error", e); }
     }
@@ -1383,11 +1758,11 @@
 
         $("menuRoster").addEventListener("click", function () { openSheet("sheetRoster"); });
         $("menuMatches").addEventListener("click", function () { openSheet("sheetMatches"); });
+        $("menuLanguage").addEventListener("click", function () { openSheet("sheetLanguage"); });
         $("menuInterface").addEventListener("click", function () { openSheet("sheetInterface"); });
         $("menuTheme").addEventListener("click", function () { openSheet("sheetTheme"); });
 
         $("btnCloseSettings").addEventListener("click", closeSettings);
-
         $("btnClearMatches").addEventListener("click", clearAllMatches);
 
         var closeButtons = document.querySelectorAll(".btn-close-sheet");
@@ -1418,6 +1793,17 @@
 
         $("themeDark").addEventListener("click", function () { setTheme("dark"); });
         $("themeLight").addEventListener("click", function () { setTheme("light"); });
+
+        /* Выбор языка */
+        var langOpts = document.querySelectorAll(".lang-option");
+        for (var k = 0; k < langOpts.length; k++) {
+            (function (opt) {
+                opt.addEventListener("click", function () {
+                    var lang = opt.getAttribute("data-lang");
+                    applyLanguage(lang);
+                });
+            })(langOpts[k]);
+        }
     }
 
     try {
@@ -1433,11 +1819,13 @@
         localStorage.removeItem("padel_score_v12");
         localStorage.removeItem("padel_score_v13");
         localStorage.removeItem("padel_score_v14");
+        localStorage.removeItem("padel_score_v15");
     } catch (e) {}
 
     bind();
     loadState();
     applyTheme();
+    applyLanguage(currentLang);
     renderTimer();
     update();
     updateMatchesCount();
