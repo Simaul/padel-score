@@ -6,15 +6,74 @@
 <title>Padel Score</title>
 
 <style>
+    /* ============================================================
+       ТЁМНАЯ ТЕМА (по умолчанию)
+       ============================================================ */
+    :root {
+        --bg: #1a1d21;
+        --card-bg: #262b30;
+        --card-bg-active: #2e3439;
+        --card-border: #333a41;
+        --card-serving-bg: #2a3438;
+        --card-serving-active: #33403f;
+        --accent: #8ab4a0;
+        --accent-light: #a8d5be;
+        --text: #e8eaed;
+        --text-muted: #b8c0c8;
+        --text-dim: #8a929a;
+        --btn-bg: #2e343a;
+        --btn-bg-active: #383f47;
+        --btn-red: #8b4a4a;
+        --btn-red-active: #723c3c;
+        --btn-green: #4a7c59;
+        --input-bg: #1a1d21;
+        --input-border: #3a424a;
+        --modal-bg: #262b30;
+        --modal-border: #3a424a;
+        --overlay: rgba(0,0,0,0.7);
+        --timer-bg: #262b30;
+        --timer-border: #333a41;
+    }
+
+    /* ============================================================
+       СВЕТЛАЯ ТЕМА
+       ============================================================ */
+    body.light-theme {
+        --bg: #f5f2ec;
+        --card-bg: #ffffff;
+        --card-bg-active: #ece8df;
+        --card-border: #e0dcd2;
+        --card-serving-bg: #e8f0ea;
+        --card-serving-active: #d8e6dc;
+        --accent: #4a7c59;
+        --accent-light: #3d6849;
+        --text: #1a1d21;
+        --text-muted: #5a6068;
+        --text-dim: #8a929a;
+        --btn-bg: #e8e4dc;
+        --btn-bg-active: #d8d4cc;
+        --btn-red: #c25a5a;
+        --btn-red-active: #a84a4a;
+        --btn-green: #4a7c59;
+        --input-bg: #f5f2ec;
+        --input-border: #d0ccc4;
+        --modal-bg: #ffffff;
+        --modal-border: #e0dcd2;
+        --overlay: rgba(0,0,0,0.4);
+        --timer-bg: #ffffff;
+        --timer-border: #e0dcd2;
+    }
+
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body { margin: 0; padding: 0; min-height: 100%; overscroll-behavior: none; }
 
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #1a1d21;
-        color: #e8eaed;
+        background: var(--bg);
+        color: var(--text);
         min-height: 100vh;
         user-select: none;
+        transition: background 0.2s, color 0.2s;
     }
 
     .app {
@@ -31,7 +90,7 @@
         margin: 4px 0 16px;
         font-size: 24px;
         letter-spacing: 3px;
-        color: #8ab4a0;
+        color: var(--accent);
         text-transform: uppercase;
         font-weight: 700;
     }
@@ -44,14 +103,14 @@
     }
 
     .score-card {
-        background: #262b30;
+        background: var(--card-bg);
         border-radius: 20px;
         padding: 22px 12px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        border: 2px solid #333a41;
+        border: 2px solid var(--card-border);
         transition: border-color 0.2s, background 0.2s, transform 0.05s;
         min-height: 320px;
         cursor: pointer;
@@ -62,16 +121,16 @@
 
     .score-card:active {
         transform: scale(0.98);
-        background: #2e3439;
+        background: var(--card-bg-active);
     }
 
     .score-card.serving {
-        border-color: #8ab4a0;
-        background: #2a3438;
+        border-color: var(--accent);
+        background: var(--card-serving-bg);
     }
 
     .score-card.serving:active {
-        background: #33403f;
+        background: var(--card-serving-active);
     }
 
     .card-top {
@@ -86,7 +145,7 @@
     .team-label {
         font-size: 13px;
         letter-spacing: 1px;
-        color: #b8c0c8;
+        color: var(--text-muted);
         text-transform: uppercase;
         font-weight: 700;
         margin-bottom: 4px;
@@ -99,7 +158,7 @@
     .server-name {
         font-size: 15px;
         font-weight: 700;
-        color: #e8eaed;
+        color: var(--text);
         height: 20px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -109,7 +168,7 @@
     .serve-indicator {
         font-size: 12px;
         font-weight: 700;
-        color: #8ab4a0;
+        color: var(--accent);
         letter-spacing: 1px;
         height: 18px;
         opacity: 0;
@@ -123,19 +182,74 @@
     .serve-numeral {
         font-weight: 700;
         margin-left: 4px;
-        color: #a8d5be;
+        color: var(--accent-light);
     }
 
     .points {
         font-size: 96px;
         font-weight: 800;
         line-height: 1;
-        color: #e8eaed;
+        color: var(--text);
         font-variant-numeric: tabular-nums;
         margin-top: 30px;
     }
 
-    .score-card.serving .points { color: #a8d5be; }
+    .score-card.serving .points { color: var(--accent-light); }
+
+    /* ============================================================
+       ТАЙМЕР
+       ============================================================ */
+    .timer-bar {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 12px;
+        padding: 10px 16px;
+        background: var(--timer-bg);
+        border: 2px solid var(--timer-border);
+        border-radius: 14px;
+    }
+
+    .timer-bar.visible {
+        display: flex;
+    }
+
+    .timer-display {
+        font-size: 28px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        color: var(--text);
+        letter-spacing: 1px;
+        min-width: 90px;
+        text-align: center;
+    }
+
+    .timer-btn {
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 10px;
+        background: var(--btn-bg);
+        color: var(--text);
+        font-size: 20px;
+        line-height: 1;
+        cursor: pointer;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Symbol", sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .timer-btn:active {
+        transform: scale(0.95);
+        background: var(--btn-bg-active);
+    }
+
+    .timer-btn.paused {
+        background: var(--btn-green);
+        color: #fff;
+    }
 
     .controls {
         display: flex;
@@ -151,16 +265,24 @@
         font-size: 26px;
         line-height: 1;
         font-weight: 400;
-        background: #2e343a;
-        color: #e8eaed;
+        background: var(--btn-bg);
+        color: var(--text);
         cursor: pointer;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Symbol", sans-serif;
     }
 
-    .control-button:active { transform: scale(0.97); background: #383f47; }
+    .control-button:active {
+        transform: scale(0.97);
+        background: var(--btn-bg-active);
+    }
 
-    .reset { background: #8b4a4a; color: #ffffff; }
-    .reset:active { background: #723c3c; }
+    .reset {
+        background: var(--btn-red);
+        color: #ffffff;
+    }
+    .reset:active {
+        background: var(--btn-red-active);
+    }
 
     .message {
         text-align: center;
@@ -168,14 +290,17 @@
         margin-top: 10px;
         font-weight: 700;
         font-size: 15px;
-        color: #a8d5be;
+        color: var(--accent-light);
         letter-spacing: 0.5px;
     }
 
+    /* ============================================================
+       МОДАЛЬНОЕ ОКНО НАСТРОЕК
+       ============================================================ */
     .modal-overlay {
         position: fixed;
         top: 0; right: 0; bottom: 0; left: 0;
-        background: rgba(0,0,0,0.7);
+        background: var(--overlay);
         display: none;
         align-items: center;
         justify-content: center;
@@ -186,12 +311,12 @@
     .modal-overlay.open { display: flex; }
 
     .modal {
-        background: #262b30;
+        background: var(--modal-bg);
         border-radius: 18px;
         padding: 22px 18px;
         width: 100%;
         max-width: 400px;
-        border: 2px solid #3a424a;
+        border: 2px solid var(--modal-border);
         max-height: 90vh;
         overflow-y: auto;
     }
@@ -200,18 +325,33 @@
         margin: 0 0 18px;
         font-size: 18px;
         text-align: center;
-        color: #a8d5be;
+        color: var(--accent-light);
         letter-spacing: 1px;
     }
 
-    .modal h3 {
-        margin: 18px 0 10px;
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #8a929a;
-        border-top: 1px solid #3a424a;
-        padding-top: 14px;
+    /* Пункт меню, который открывает подменю */
+    .menu-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 14px;
+        background: var(--input-bg);
+        border: 2px solid var(--modal-border);
+        border-radius: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .menu-item:active {
+        background: var(--btn-bg);
+    }
+
+    .menu-item .arrow {
+        color: var(--text-dim);
+        font-size: 18px;
     }
 
     .field { margin-bottom: 14px; }
@@ -219,35 +359,35 @@
     .field label {
         display: block;
         font-size: 13px;
-        color: #8a929a;
+        color: var(--text-dim);
         margin-bottom: 5px;
         letter-spacing: 0.5px;
     }
 
     .field input {
         width: 100%;
-        background: #1a1d21;
-        border: 2px solid #3a424a;
+        background: var(--input-bg);
+        border: 2px solid var(--input-border);
         border-radius: 10px;
         padding: 12px;
-        color: #e8eaed;
+        color: var(--text);
         font-size: 16px;
         font-weight: 600;
         outline: none;
     }
 
-    .field input:focus { border-color: #8ab4a0; }
+    .field input:focus { border-color: var(--accent); }
 
     .toggle-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 12px 0;
+        padding: 14px 0;
     }
 
     .toggle-row span {
         font-size: 14px;
-        color: #e8eaed;
+        color: var(--text);
         font-weight: 600;
     }
 
@@ -255,7 +395,7 @@
         position: relative;
         width: 50px;
         height: 28px;
-        background: #3a424a;
+        background: var(--input-border);
         border-radius: 14px;
         cursor: pointer;
         transition: background 0.2s;
@@ -269,12 +409,12 @@
         left: 3px;
         width: 22px;
         height: 22px;
-        background: #e8eaed;
+        background: #ffffff;
         border-radius: 50%;
         transition: transform 0.2s;
     }
 
-    .toggle.on { background: #4a7c59; }
+    .toggle.on { background: var(--btn-green); }
     .toggle.on::after { transform: translateX(22px); }
 
     .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
@@ -287,26 +427,93 @@
         font-size: 15px;
         font-weight: 700;
         cursor: pointer;
-        background: #2e343a;
-        color: #e8eaed;
+        background: var(--btn-bg);
+        color: var(--text);
     }
 
-    .modal-buttons .save { background: #4a7c59; color: #fff; }
+    .modal-buttons .save {
+        background: var(--btn-green);
+        color: #fff;
+    }
 
     .hidden { display: none !important; }
 
     /* ============================================================
-       ЛАНДШАФТНЫЙ РЕЖИМ (телефон на боку)
-       ============================================================
-       - Скрываем заголовок ТОЛЬКО в горизонтали
-       - Карточки + кнопки занимают всю высоту экрана
-       - Небольшие отступы от краёв
+       ШТОРКА СНИЗУ (для подменю)
+       ============================================================ */
+    .sheet-overlay {
+        position: fixed;
+        top: 0; right: 0; bottom: 0; left: 0;
+        background: var(--overlay);
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+        z-index: 200;
+    }
+
+    .sheet-overlay.open { display: flex; }
+
+    .sheet {
+        background: var(--modal-bg);
+        border-top-left-radius: 22px;
+        border-top-right-radius: 22px;
+        padding: 22px 20px 30px;
+        width: 100%;
+        max-width: 500px;
+        border-top: 2px solid var(--modal-border);
+        border-left: 2px solid var(--modal-border);
+        border-right: 2px solid var(--modal-border);
+        animation: slideUp 0.25s ease-out;
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+    }
+
+    .sheet h2 {
+        margin: 0 0 18px;
+        font-size: 18px;
+        text-align: center;
+        color: var(--accent-light);
+        letter-spacing: 1px;
+    }
+
+    /* Варианты выбора темы */
+    .theme-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        background: var(--input-bg);
+        border: 2px solid var(--modal-border);
+        border-radius: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .theme-option:active {
+        background: var(--btn-bg);
+    }
+
+    .theme-option.selected {
+        border-color: var(--accent);
+    }
+
+    .theme-option .check {
+        color: var(--accent);
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    /* ============================================================
+       ЛАНДШАФТНЫЙ РЕЖИМ
        ============================================================ */
     @media (orientation: landscape) {
-        /* Прячем заголовок только в ландшафте */
-        h1 {
-            display: none;
-        }
+        h1 { display: none; }
 
         .app {
             max-width: 100%;
@@ -325,9 +532,7 @@
             padding: 14px 12px;
         }
 
-        .card-top {
-            top: 16px;
-        }
+        .card-top { top: 16px; }
 
         .team-label { font-size: 12px; height: 16px; margin-bottom: 3px; }
         .server-name { font-size: 14px; height: 18px; }
@@ -338,13 +543,27 @@
             margin-top: 26px;
         }
 
-        .controls {
-            margin-top: 10px;
+        .timer-bar {
+            margin-top: 8px;
+            padding: 6px 12px;
         }
 
-        .control-button {
-            padding: 14px 6px;
+        .timer-display {
             font-size: 22px;
+            min-width: 70px;
+        }
+
+        .timer-btn {
+            width: 34px;
+            height: 34px;
+            font-size: 17px;
+        }
+
+        .controls { margin-top: 8px; }
+
+        .control-button {
+            padding: 12px 6px;
+            font-size: 20px;
         }
 
         .message {
@@ -356,11 +575,12 @@
         }
     }
 
-    /* Очень низкие ландшафтные экраны (iPhone SE) */
     @media (orientation: landscape) and (max-height: 400px) {
         .points { font-size: 64px; margin-top: 18px; }
         .card-top { top: 12px; }
-        .control-button { padding: 10px 6px; font-size: 20px; }
+        .control-button { padding: 10px 6px; font-size: 18px; }
+        .timer-display { font-size: 18px; min-width: 60px; }
+        .timer-btn { width: 30px; height: 30px; font-size: 15px; }
     }
 </style>
 </head>
@@ -394,6 +614,13 @@
         </div>
     </div>
 
+    <!-- ТАЙМЕР (скрыт, если выключен в настройках) -->
+    <div class="timer-bar" id="timerBar">
+        <button type="button" class="timer-btn" id="btnTimerToggle" title="Старт/пауза">&#x25B6;&#xFE0E;</button>
+        <div class="timer-display" id="timerDisplay">00:00</div>
+        <button type="button" class="timer-btn" id="btnTimerReset" title="Сброс">&#x21BA;&#xFE0E;</button>
+    </div>
+
     <div class="message" id="message"></div>
 
     <div class="controls">
@@ -404,11 +631,42 @@
     </div>
 </div>
 
+<!-- ============================================================
+     ГЛАВНОЕ МЕНЮ НАСТРОЕК
+     ============================================================ -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal">
         <h2>Настройки</h2>
 
-        <h3>Команды</h3>
+        <div class="menu-item" id="menuTeams">
+            <span>Команды</span>
+            <span class="arrow">&#x203A;</span>
+        </div>
+        <div class="menu-item" id="menuPlayers">
+            <span>Игроки</span>
+            <span class="arrow">&#x203A;</span>
+        </div>
+        <div class="menu-item" id="menuInterface">
+            <span>Интерфейс</span>
+            <span class="arrow">&#x203A;</span>
+        </div>
+        <div class="menu-item" id="menuTheme">
+            <span>Тема</span>
+            <span class="arrow">&#x203A;</span>
+        </div>
+
+        <div class="modal-buttons">
+            <button type="button" id="btnCloseSettings">Закрыть</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     ШТОРКА: КОМАНДЫ
+     ============================================================ -->
+<div class="sheet-overlay" id="sheetTeams">
+    <div class="sheet">
+        <h2>Команды</h2>
         <div class="field">
             <label>Название команды 1</label>
             <input id="teamName0" value="Команда 1" maxlength="16">
@@ -417,8 +675,18 @@
             <label>Название команды 2</label>
             <input id="teamName1" value="Команда 2" maxlength="16">
         </div>
+        <div class="modal-buttons">
+            <button type="button" class="btn-close-sheet">Готово</button>
+        </div>
+    </div>
+</div>
 
-        <h3>Игроки</h3>
+<!-- ============================================================
+     ШТОРКА: ИГРОКИ
+     ============================================================ -->
+<div class="sheet-overlay" id="sheetPlayers">
+    <div class="sheet">
+        <h2>Игроки</h2>
         <div class="field">
             <label>Команда 1 — Игрок 1</label>
             <input id="p1" value="Игрок 1" maxlength="16">
@@ -435,16 +703,48 @@
             <label>Команда 2 — Игрок 4</label>
             <input id="p4" value="Игрок 4" maxlength="16">
         </div>
+        <div class="modal-buttons">
+            <button type="button" class="btn-close-sheet">Готово</button>
+        </div>
+    </div>
+</div>
 
-        <h3>Интерфейс</h3>
+<!-- ============================================================
+     ШТОРКА: ИНТЕРФЕЙС
+     ============================================================ -->
+<div class="sheet-overlay" id="sheetInterface">
+    <div class="sheet">
+        <h2>Интерфейс</h2>
+        <div class="toggle-row">
+            <span>Показывать таймер</span>
+            <div class="toggle" id="toggleTimer"></div>
+        </div>
         <div class="toggle-row">
             <span>Показывать кнопку смены подачи</span>
             <div class="toggle" id="toggleSwitch"></div>
         </div>
-
         <div class="modal-buttons">
-            <button type="button" id="btnCancelSettings">Отмена</button>
-            <button type="button" class="save" id="btnSaveSettings">Сохранить</button>
+            <button type="button" class="btn-close-sheet">Готово</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     ШТОРКА: ТЕМА
+     ============================================================ -->
+<div class="sheet-overlay" id="sheetTheme">
+    <div class="sheet">
+        <h2>Тема</h2>
+        <div class="theme-option" id="themeDark" data-theme="dark">
+            <span>Тёмная</span>
+            <span class="check" id="checkDark">&#x2713;</span>
+        </div>
+        <div class="theme-option" id="themeLight" data-theme="light">
+            <span>Светлая</span>
+            <span class="check" id="checkLight"></span>
+        </div>
+        <div class="modal-buttons">
+            <button type="button" class="btn-close-sheet">Готово</button>
         </div>
     </div>
 </div>
@@ -453,7 +753,7 @@
 (function () {
     "use strict";
 
-    var STORAGE_KEY = "padel_score_v9";
+    var STORAGE_KEY = "padel_score_v10";
 
     var players = ["Игрок 1", "Игрок 2", "Игрок 3", "Игрок 4"];
     var teamNames = ["Команда 1", "Команда 2"];
@@ -462,6 +762,13 @@
     var serveCount = 1;
     var history = [];
     var showSwitchButton = false;
+    var showTimer = false;
+    var currentTheme = "dark";
+
+    /* Таймер */
+    var timerSeconds = 0;
+    var timerInterval = null;
+    var timerRunning = false;
 
     var order = [0, 2, 1, 3];
     var romanNumerals = ["", "Ⅰ", "Ⅱ"];
@@ -563,6 +870,12 @@
         } else {
             $("btnSwitch").classList.add("hidden");
         }
+
+        if (showTimer) {
+            $("timerBar").classList.add("visible");
+        } else {
+            $("timerBar").classList.remove("visible");
+        }
     }
 
     function showMessage(text) {
@@ -573,34 +886,136 @@
         }, 2000);
     }
 
+    /* ============================================================
+       ТАЙМЕР
+       ============================================================ */
+
+    function formatTime(sec) {
+        var m = Math.floor(sec / 60);
+        var s = sec % 60;
+        return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+    }
+
+    function renderTimer() {
+        $("timerDisplay").textContent = formatTime(timerSeconds);
+    }
+
+    function startTimer() {
+        if (timerRunning) return;
+        timerRunning = true;
+        $("btnTimerToggle").innerHTML = "&#x23F8;&#xFE0E;"; /* ⏸ */
+        $("btnTimerToggle").classList.add("paused");
+        timerInterval = setInterval(function () {
+            timerSeconds++;
+            renderTimer();
+        }, 1000);
+    }
+
+    function pauseTimer() {
+        if (!timerRunning) return;
+        timerRunning = false;
+        $("btnTimerToggle").innerHTML = "&#x25B6;&#xFE0E;"; /* ▶ */
+        $("btnTimerToggle").classList.remove("paused");
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+
+    function toggleTimer() {
+        if (timerRunning) {
+            pauseTimer();
+        } else {
+            startTimer();
+        }
+    }
+
+    function resetTimer() {
+        pauseTimer();
+        timerSeconds = 0;
+        renderTimer();
+    }
+
+    /* ============================================================
+       НАСТРОЙКИ
+       ============================================================ */
+
     function openSettings() {
+        /* Заполняем поля текущими значениями */
         $("teamName0").value = teamNames[0];
         $("teamName1").value = teamNames[1];
         $("p1").value = players[0];
         $("p2").value = players[1];
         $("p3").value = players[2];
         $("p4").value = players[3];
+        $("toggleTimer").classList.toggle("on", showTimer);
         $("toggleSwitch").classList.toggle("on", showSwitchButton);
+        updateThemeChecks();
         $("settingsModal").classList.add("open");
     }
 
     function closeSettings() {
         $("settingsModal").classList.remove("open");
+        /* Сохраняем всё, что ввели в шторках */
+        saveAllSettings();
     }
 
-    function saveSettings() {
+    function saveAllSettings() {
         teamNames[0] = $("teamName0").value.trim() || "Команда 1";
         teamNames[1] = $("teamName1").value.trim() || "Команда 2";
         players[0] = $("p1").value.trim() || "Игрок 1";
         players[1] = $("p2").value.trim() || "Игрок 2";
         players[2] = $("p3").value.trim() || "Игрок 3";
         players[3] = $("p4").value.trim() || "Игрок 4";
-        showSwitchButton = $("toggleSwitch").classList.contains("on");
-        closeSettings();
         update();
         saveState();
-        showMessage("Сохранено");
     }
+
+    function openSheet(id) {
+        $(id).classList.add("open");
+    }
+
+    function closeSheet(id) {
+        $(id).classList.remove("open");
+        /* Если закрываем шторку интерфейса — применяем изменения */
+        if (id === "sheetInterface") {
+            showTimer = $("toggleTimer").classList.contains("on");
+            showSwitchButton = $("toggleSwitch").classList.contains("on");
+            update();
+            saveState();
+        }
+        if (id === "sheetTeams" || id === "sheetPlayers") {
+            saveAllSettings();
+        }
+    }
+
+    /* ============================================================
+       ТЕМА
+       ============================================================ */
+
+    function applyTheme() {
+        if (currentTheme === "light") {
+            document.body.classList.add("light-theme");
+        } else {
+            document.body.classList.remove("light-theme");
+        }
+        updateThemeChecks();
+    }
+
+    function updateThemeChecks() {
+        $("checkDark").textContent = currentTheme === "dark" ? "✓" : "";
+        $("checkLight").textContent = currentTheme === "light" ? "✓" : "";
+        $("themeDark").classList.toggle("selected", currentTheme === "dark");
+        $("themeLight").classList.toggle("selected", currentTheme === "light");
+    }
+
+    function setTheme(theme) {
+        currentTheme = theme;
+        applyTheme();
+        saveState();
+    }
+
+    /* ============================================================
+       СОХРАНЕНИЕ
+       ============================================================ */
 
     function saveState() {
         try {
@@ -610,7 +1025,9 @@
                 points: points,
                 serverIndex: serverIndex,
                 serveCount: serveCount,
-                showSwitchButton: showSwitchButton
+                showSwitchButton: showSwitchButton,
+                showTimer: showTimer,
+                currentTheme: currentTheme
             }));
         } catch (e) { console.warn("save error", e); }
     }
@@ -626,24 +1043,73 @@
             if (typeof s.serverIndex === "number") serverIndex = s.serverIndex;
             if (typeof s.serveCount === "number") serveCount = s.serveCount;
             if (typeof s.showSwitchButton === "boolean") showSwitchButton = s.showSwitchButton;
+            if (typeof s.showTimer === "boolean") showTimer = s.showTimer;
+            if (typeof s.currentTheme === "string") currentTheme = s.currentTheme;
         } catch (e) { console.warn("load error", e); }
     }
 
+    /* ============================================================
+       ПРИВЯЗКА
+       ============================================================ */
+
     function bind() {
+        /* Игровые карточки */
         $("card0").addEventListener("click", function () { addPoint(0); });
         $("card1").addEventListener("click", function () { addPoint(1); });
 
+        /* Нижние кнопки */
         $("btnSwitch").addEventListener("click", switchServe);
         $("btnUndo").addEventListener("click", undo);
         $("btnReset").addEventListener("click", resetGame);
         $("btnSettings").addEventListener("click", openSettings);
-        $("btnCancelSettings").addEventListener("click", closeSettings);
-        $("btnSaveSettings").addEventListener("click", saveSettings);
+
+        /* Таймер */
+        $("btnTimerToggle").addEventListener("click", toggleTimer);
+        $("btnTimerReset").addEventListener("click", resetTimer);
+
+        /* Главное меню настроек — открытие подменю */
+        $("menuTeams").addEventListener("click", function () { openSheet("sheetTeams"); });
+        $("menuPlayers").addEventListener("click", function () { openSheet("sheetPlayers"); });
+        $("menuInterface").addEventListener("click", function () { openSheet("sheetInterface"); });
+        $("menuTheme").addEventListener("click", function () { openSheet("sheetTheme"); });
+
+        $("btnCloseSettings").addEventListener("click", closeSettings);
+
+        /* Кнопки "Готово" во всех шторках */
+        var closeButtons = document.querySelectorAll(".btn-close-sheet");
+        for (var i = 0; i < closeButtons.length; i++) {
+            (function (btn) {
+                btn.addEventListener("click", function () {
+                    var sheet = btn.closest(".sheet-overlay");
+                    if (sheet) closeSheet(sheet.id);
+                });
+            })(closeButtons[i]);
+        }
+
+        /* Закрытие шторки тапом по затемнению */
+        var sheets = document.querySelectorAll(".sheet-overlay");
+        for (var j = 0; j < sheets.length; j++) {
+            (function (sheet) {
+                sheet.addEventListener("click", function (e) {
+                    if (e.target === sheet) closeSheet(sheet.id);
+                });
+            })(sheets[j]);
+        }
+
+        /* Тумблеры */
+        $("toggleTimer").addEventListener("click", function () {
+            this.classList.toggle("on");
+        });
         $("toggleSwitch").addEventListener("click", function () {
             this.classList.toggle("on");
         });
+
+        /* Выбор темы */
+        $("themeDark").addEventListener("click", function () { setTheme("dark"); });
+        $("themeLight").addEventListener("click", function () { setTheme("light"); });
     }
 
+    /* Очистка старых версий */
     try {
         localStorage.removeItem("padel_score_state");
         localStorage.removeItem("padel_score_v2");
@@ -651,10 +1117,13 @@
         localStorage.removeItem("padel_score_v4");
         localStorage.removeItem("padel_score_v5");
         localStorage.removeItem("padel_score_v6");
+        localStorage.removeItem("padel_score_v9");
     } catch (e) {}
 
     bind();
     loadState();
+    applyTheme();
+    renderTimer();
     update();
 
 })();
