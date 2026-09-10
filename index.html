@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Padel Score</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f2f4f7;
+        color: #111827;
+        min-height: 100vh;
+    }
+
+    .app {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px 16px 30px;
+    }
+
+    h1 {
+        text-align: center;
+        margin: 10px 0 25px;
+        font-size: 32px;
+    }
+
+    .players {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .player {
+        background: white;
+        border-radius: 18px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .player input {
+        width: 100%;
+        border: none;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 600;
+        outline: none;
+        background: transparent;
+    }
+
+    .sets {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .set {
+        background: white;
+        border-radius: 14px;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .set-title {
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 5px;
+    }
+
+    .set-score {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .scoreboard {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .score-card {
+        background: white;
+        border-radius: 22px;
+        padding: 20px 12px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.09);
+    }
+
+    .points {
+        font-size: 64px;
+        font-weight: 800;
+        margin: 10px 0 18px;
+    }
+
+    .point-button {
+        width: 100%;
+        border: none;
+        border-radius: 16px;
+        background: #111827;
+        color: white;
+        font-size: 22px;
+        font-weight: 700;
+        padding: 18px 10px;
+    }
+
+    .point-button:active {
+        transform: scale(0.97);
+    }
+
+    .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .control-button {
+        flex: 1;
+        border: none;
+        border-radius: 14px;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        background: white;
+        color: #111827;
+    }
+
+    .reset {
+        background: #dc2626;
+        color: white;
+    }
+
+    .message {
+        text-align: center;
+        min-height: 25px;
+        margin: 15px 0;
+        font-weight: 600;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <h1>🎾 Padel Score</h1>
+
+    <div class="players">
+        <div class="player">
+            <input id="name0" value="Команда 1">
+        </div>
+
+        <div class="player">
+            <input id="name1" value="Команда 2">
+        </div>
+    </div>
+
+    <div class="sets">
+        <div class="set">
+            <div class="set-title">Сет 1</div>
+            <div class="set-score">
+                <span id="set1a">0</span> — <span id="set1b">0</span>
+            </div>
+        </div>
+
+        <div class="set">
+            <div class="set-title">Сет 2</div>
+            <div class="set-score">
+                <span id="set2a">0</span> — <span id="set2b">0</span>
+            </div>
+        </div>
+
+        <div class="set">
+            <div class="set-title">Сет 3</div>
+            <div class="set-score">
+                <span id="set3a">0</span> — <span id="set3b">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="scoreboard">
+
+        <div class="score-card">
+            <input
+                id="scoreName0"
+                value="Команда 1"
+                style="border:none;text-align:center;font-size:18px;font-weight:600;width:100%;"
+            >
+
+            <div class="points" id="score0">0</div>
+
+            <button class="point-button" onclick="addPoint(0)">
+                + Очко
+            </button>
+        </div>
+
+        <div class="score-card">
+            <input
+                id="scoreName1"
+                value="Команда 2"
+                style="border:none;text-align:center;font-size:18px;font-weight:600;width:100%;"
+            >
+
+            <div class="points" id="score1">0</div>
+
+            <button class="point-button" onclick="addPoint(1)">
+                + Очко
+            </button>
+        </div>
+
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <div class="controls">
+        <button class="control-button" onclick="undo()">
+            ↩️ Отменить
+        </button>
+
+        <button class="control-button reset" onclick="resetGame()">
+            🔄 Новая игра
+        </button>
+    </div>
+
+</div>
+
+<script>
+
+let points = [0, 0];
+
+let games = [
+    [0, 0],
+    [0, 0],
+    [0, 0]
+];
+
+let currentSet = 0;
+let history = [];
+
+const tennisPoints = [0, 15, 30, 40];
+
+function saveHistory() {
+    history.push({
+        points: [...points],
+        games: games.map(set => [...set]),
+        currentSet: currentSet
+    });
+}
+
+function addPoint(player) {
+
+    saveHistory();
+
+    let opponent = player === 0 ? 1 : 0;
+
+    // Если уже идёт тай-брейк
+    if (games[currentSet][0] === 6 &&
+        games[currentSet][1] === 6) {
+
+        points[player]++;
+
+        if (points[player] >= 7 &&
+            points[player] - points[opponent] >= 2) {
+
+            winSet(player);
+        }
+
+        update();
+        return;
+    }
+
+    // Обычный гейм
+    if (points[player] < 3) {
+
+        points[player]++;
+
+    } else if (points[player] === 3 &&
+               points[opponent] < 3) {
+
+        winGame(player);
+
+    } else if (points[player] === 3 &&
+               points[opponent] === 3) {
+
+        // Deuce → Advantage
+        points[player] = 4;
+
+    } else if (points[player] === 4) {
+
+        winGame(player);
+
+    } else if (points[player] === 3 &&
+               points[opponent] === 4) {
+
+        // С Advantage обратно в Deuce
+        points[opponent] = 3;
+    }
+
+    update();
+}
+
+function winGame(player) {
+
+    games[currentSet][player]++;
+
+    points = [0, 0];
+
+    // Проверяем победу в сете
+    if (
+        games[currentSet][player] >= 6 &&
+        games[currentSet][player] - games[currentSet][1-player] >= 2
+    ) {
+        winSet(player);
+    }
+
+    // 6:6 → тай-брейк
+    else if (
+        games[currentSet][0] === 6 &&
+        games[currentSet][1] === 6
+    ) {
+        points = [0, 0];
+        showMessage("Тай-брейк!");
+    }
+}
+
+function winSet(player) {
+
+    games[currentSet][player]++;
+
+    points = [0, 0];
+
+    // Победа в матче — 2 выигранных сета
+    let setsWon = games.filter(set =>
+        set[player] > set[1-player]
+    ).length;
+
+    if (setsWon >= 2) {
+
+        showMessage(
+            "🏆 " +
+            document.getElementById("name" + player).value +
+            " выиграли матч!"
+        );
+
+        return;
+    }
+
+    if (currentSet < 2) {
+        currentSet++;
+        showMessage("Новый сет!");
+    }
+
+    update();
+}
+
+function pointText(value, opponent) {
+
+    if (value === 4 && opponent === 3) {
+        return "AD";
+    }
+
+    if (value === 3 && opponent === 4) {
+        return "40";
+    }
+
+    if (value >= 4) {
+        return "40";
+    }
+
+    return tennisPoints[value];
+}
+
+function update() {
+
+    let p0 = pointText(points[0], points[1]);
+    let p1 = pointText(points[1], points[0]);
+
+    document.getElementById("score0").textContent = p0;
+    document.getElementById("score1").textContent = p1;
+
+    for (let i = 0; i < 3; i++) {
+
+        document.getElementById("set" + (i+1) + "a")
+            .textContent = games[i][0];
+
+        document.getElementById("set" + (i+1) + "b")
+            .textContent = games[i][1];
+    }
+}
+
+function showMessage(text) {
+    document.getElementById("message").textContent = text;
+
+    setTimeout(() => {
+        document.getElementById("message").textContent = "";
+    }, 2500);
+}
+
+function undo() {
+
+    if (history.length === 0) return;
+
+    let previous = history.pop();
+
+    points = previous.points;
+    games = previous.games;
+    currentSet = previous.currentSet;
+
+    update();
+}
+
+function resetGame() {
+
+    if (!confirm("Начать новую игру?")) return;
+
+    points = [0, 0];
+
+    games = [
+        [0, 0],
+        [0, 0],
+        [0, 0]
+    ];
+
+    currentSet = 0;
+    history = [];
+
+    update();
+    showMessage("Новая игра");
+}
+
+update();
+
+</script>
+
+</body>
+</html>
