@@ -6,17 +6,8 @@
 <title>Padel Score</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-        margin: 0;
-        padding: 0;
-        min-height: 100%;
-        overscroll-behavior: none;
-    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; min-height: 100%; overscroll-behavior: none; }
 
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -103,9 +94,7 @@
         margin-top: 2px;
     }
 
-    .score-card.serving .serve-indicator {
-        opacity: 1;
-    }
+    .score-card.serving .serve-indicator { opacity: 1; }
 
     .points {
         font-size: 88px;
@@ -116,9 +105,7 @@
         margin: 6px 0;
     }
 
-    .score-card.serving .points {
-        color: #a8d5be;
-    }
+    .score-card.serving .points { color: #a8d5be; }
 
     .point-button {
         width: 100%;
@@ -134,16 +121,9 @@
         transition: transform 0.05s, background 0.1s;
     }
 
-    .point-button:active {
-        transform: scale(0.96);
-        background: #3d6849;
-    }
+    .point-button:active { transform: scale(0.96); background: #3d6849; }
 
-    .controls {
-        display: flex;
-        gap: 8px;
-        margin-top: 14px;
-    }
+    .controls { display: flex; gap: 8px; margin-top: 14px; }
 
     .control-button {
         flex: 1;
@@ -158,19 +138,10 @@
         letter-spacing: 0.5px;
     }
 
-    .control-button:active {
-        transform: scale(0.97);
-        background: #383f47;
-    }
+    .control-button:active { transform: scale(0.97); background: #383f47; }
 
-    .reset {
-        background: #8b4a4a;
-        color: #ffffff;
-    }
-
-    .reset:active {
-        background: #723c3c;
-    }
+    .reset { background: #8b4a4a; color: #ffffff; }
+    .reset:active { background: #723c3c; }
 
     .message {
         text-align: center;
@@ -182,7 +153,6 @@
         letter-spacing: 0.5px;
     }
 
-    /* Модальное окно настроек */
     .modal-overlay {
         position: fixed;
         inset: 0;
@@ -194,9 +164,7 @@
         padding: 20px;
     }
 
-    .modal-overlay.open {
-        display: flex;
-    }
+    .modal-overlay.open { display: flex; }
 
     .modal {
         background: #262b30;
@@ -215,9 +183,7 @@
         letter-spacing: 1px;
     }
 
-    .field {
-        margin-bottom: 14px;
-    }
+    .field { margin-bottom: 14px; }
 
     .field label {
         display: block;
@@ -239,15 +205,9 @@
         outline: none;
     }
 
-    .field input:focus {
-        border-color: #8ab4a0;
-    }
+    .field input:focus { border-color: #8ab4a0; }
 
-    .modal-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-    }
+    .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
 
     .modal-buttons button {
         flex: 1;
@@ -261,21 +221,16 @@
         color: #e8eaed;
     }
 
-    .modal-buttons .save {
-        background: #4a7c59;
-        color: #fff;
-    }
+    .modal-buttons .save { background: #4a7c59; color: #fff; }
 </style>
 </head>
 
 <body>
 
 <div class="app">
-
     <h1>🎾 Padel Score</h1>
 
     <div class="scoreboard">
-
         <div class="score-card" id="card0">
             <div>
                 <div class="team-label">Команда 1</div>
@@ -283,9 +238,7 @@
                 <div class="serve-indicator">🎾 подача</div>
             </div>
             <div class="points" id="score0">0</div>
-            <button class="point-button" onclick="addPoint(0)">
-                + ОЧКО
-            </button>
+            <button type="button" class="point-button" id="btn0">+ ОЧКО</button>
         </div>
 
         <div class="score-card" id="card1">
@@ -295,37 +248,23 @@
                 <div class="serve-indicator">🎾 подача</div>
             </div>
             <div class="points" id="score1">0</div>
-            <button class="point-button" onclick="addPoint(1)">
-                + ОЧКО
-            </button>
+            <button type="button" class="point-button" id="btn1">+ ОЧКО</button>
         </div>
-
     </div>
 
     <div class="message" id="message"></div>
 
     <div class="controls">
-        <button class="control-button" onclick="switchServe()">
-            🎾 Смена<br>подачи
-        </button>
-        <button class="control-button" onclick="undo()">
-            ↩️ Отмена
-        </button>
-        <button class="control-button" onclick="openSettings()">
-            ⚙️ Настройки
-        </button>
-        <button class="control-button reset" onclick="resetGame()">
-            🔄 Новая
-        </button>
+        <button type="button" class="control-button" id="btnSwitch">🎾 Смена<br>подачи</button>
+        <button type="button" class="control-button" id="btnUndo">↩️ Отмена</button>
+        <button type="button" class="control-button" id="btnSettings">⚙️ Настройки</button>
+        <button type="button" class="control-button reset" id="btnReset">🔄 Новая</button>
     </div>
-
 </div>
 
-<!-- Настройки -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal">
         <h2>Настройки игроков</h2>
-
         <div class="field">
             <label>Команда 1 — Игрок 1</label>
             <input id="p1" value="Игрок 1" maxlength="16">
@@ -342,154 +281,189 @@
             <label>Команда 2 — Игрок 4</label>
             <input id="p4" value="Игрок 4" maxlength="16">
         </div>
-
         <div class="modal-buttons">
-            <button onclick="closeSettings()">Отмена</button>
-            <button class="save" onclick="saveSettings()">Сохранить</button>
+            <button type="button" id="btnCancelSettings">Отмена</button>
+            <button type="button" class="save" id="btnSaveSettings">Сохранить</button>
         </div>
     </div>
 </div>
 
 <script>
+(function () {
+    "use strict";
 
-/*
- * Игроки:
- *   0 → Игрок 1 (Команда 1)
- *   1 → Игрок 2 (Команда 1)
- *   2 → Игрок 3 (Команда 2)
- *   3 → Игрок 4 (Команда 2)
- *
- * Порядок подачи: 0 → 2 → 1 → 3 → 0 → 2 → 1 → 3 ...
- */
+    var STORAGE_KEY = "padel_score_v3";
 
-const STORAGE_KEY = "padel_score_v2";
+    // Игроки: 0,1 → Команда 1; 2,3 → Команда 2
+    var players = ["Игрок 1", "Игрок 2", "Игрок 3", "Игрок 4"];
+    var points = [0, 0];
+    var serverIndex = 0;
+    var history = [];
 
-let players = ["Игрок 1", "Игрок 2", "Игрок 3", "Игрок 4"];
-let points = [0, 0];
-let serverIndex = 0;   // индекс текущего подающего (0..3)
-let history = [];
+    var order = [0, 2, 1, 3]; // порядок подачи
 
-/* Какой команде принадлежит подающий: 0,1 → Команда 1; 2,3 → Команда 2 */
-function serverTeam() {
-    return serverIndex < 2 ? 0 : 1;
-}
-
-function addPoint(team) {
-    saveHistory();
-    points[team]++;
-    // автопереход подачи по кругу 0→2→1→3
-    serverIndex = nextServer(serverIndex);
-    update();
-    saveState();
-}
-
-function nextServer(idx) {
-    // порядок: 0 → 2 → 1 → 3 → 0 ...
-    const order = [0, 2, 1, 3];
-    const pos = order.indexOf(idx);
-    return order[(pos + 1) % 4];
-}
-
-function switchServe() {
-    saveHistory();
-    serverIndex = nextServer(serverIndex);
-    update();
-    saveState();
-}
-
-function undo() {
-    if (history.length === 0) {
-        showMessage("Нечего отменять");
-        return;
+    function nextServer(idx) {
+        var pos = order.indexOf(idx);
+        if (pos === -1) pos = 0;
+        return order[(pos + 1) % 4];
     }
-    const prev = history.pop();
-    points = prev.points;
-    serverIndex = prev.serverIndex;
-    update();
-    saveState();
-}
 
-function resetGame() {
-    if (!confirm("Начать новую игру?")) return;
-    points = [0, 0];
-    serverIndex = 0;
-    history = [];
-    update();
-    saveState();
-    showMessage("Новая игра");
-}
+    function serverTeam() {
+        return serverIndex < 2 ? 0 : 1;
+    }
 
-function update() {
-    document.getElementById("score0").textContent = points[0];
-    document.getElementById("score1").textContent = points[1];
+    function $(id) { return document.getElementById(id); }
 
-    const st = serverTeam();
-    const serverName = players[serverIndex];
+    function saveHistory() {
+        history.push({
+            points: [points[0], points[1]],
+            serverIndex: serverIndex
+        });
+    }
 
-    document.getElementById("server0").textContent = st === 0 ? serverName : "—";
-    document.getElementById("server1").textContent = st === 1 ? serverName : "—";
+    function addPoint(team) {
+        saveHistory();
+        points[team] = points[team] + 1;
+        serverIndex = nextServer(serverIndex);
+        update();
+        saveState();
+    }
 
-    document.getElementById("card0").classList.toggle("serving", st === 0);
-    document.getElementById("card1").classList.toggle("serving", st === 1);
-}
+    function switchServe() {
+        saveHistory();
+        serverIndex = nextServer(serverIndex);
+        update();
+        saveState();
+    }
 
-function showMessage(text) {
-    const el = document.getElementById("message");
-    el.textContent = text;
-    setTimeout(() => {
-        if (el.textContent === text) el.textContent = "";
-    }, 2000);
-}
+    function undo() {
+        if (history.length === 0) {
+            showMessage("Нечего отменять");
+            return;
+        }
+        var prev = history.pop();
+        points = prev.points;
+        serverIndex = prev.serverIndex;
+        update();
+        saveState();
+    }
 
-/* --- Настройки --- */
+    function resetGame() {
+        if (!confirm("Начать новую игру?")) return;
+        points = [0, 0];
+        serverIndex = 0;
+        history = [];
+        update();
+        saveState();
+        showMessage("Новая игра");
+    }
 
-function openSettings() {
-    document.getElementById("p1").value = players[0];
-    document.getElementById("p2").value = players[1];
-    document.getElementById("p3").value = players[2];
-    document.getElementById("p4").value = players[3];
-    document.getElementById("settingsModal").classList.add("open");
-}
+    function update() {
+        $("score0").textContent = points[0];
+        $("score1").textContent = points[1];
 
-function closeSettings() {
-    document.getElementById("settingsModal").classList.remove("open");
-}
+        var st = serverTeam();
+        var name = players[serverIndex];
 
-function saveSettings() {
-    players[0] = document.getElementById("p1").value.trim() || "Игрок 1";
-    players[1] = document.getElementById("p2").value.trim() || "Игрок 2";
-    players[2] = document.getElementById("p3").value.trim() || "Игрок 3";
-    players[3] = document.getElementById("p4").value.trim() || "Игрок 4";
-    closeSettings();
-    update();
-    saveState();
-    showMessage("Сохранено");
-}
+        $("server0").textContent = st === 0 ? name : "—";
+        $("server1").textContent = st === 1 ? name : "—";
 
-/* --- Сохранение --- */
+        if (st === 0) {
+            $("card0").classList.add("serving");
+            $("card1").classList.remove("serving");
+        } else {
+            $("card1").classList.add("serving");
+            $("card0").classList.remove("serving");
+        }
+    }
 
-function saveState() {
-    const state = { players, points, serverIndex };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
+    function showMessage(text) {
+        var el = $("message");
+        el.textContent = text;
+        setTimeout(function () {
+            if (el.textContent === text) el.textContent = "";
+        }, 2000);
+    }
 
-function loadState() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
+    /* --- Настройки --- */
+
+    function openSettings() {
+        $("p1").value = players[0];
+        $("p2").value = players[1];
+        $("p3").value = players[2];
+        $("p4").value = players[3];
+        $("settingsModal").classList.add("open");
+    }
+
+    function closeSettings() {
+        $("settingsModal").classList.remove("open");
+    }
+
+    function saveSettings() {
+        players[0] = $("p1").value.trim() || "Игрок 1";
+        players[1] = $("p2").value.trim() || "Игрок 2";
+        players[2] = $("p3").value.trim() || "Игрок 3";
+        players[3] = $("p4").value.trim() || "Игрок 4";
+        closeSettings();
+        update();
+        saveState();
+        showMessage("Сохранено");
+    }
+
+    /* --- Сохранение --- */
+
+    function saveState() {
+        try {
+            var state = {
+                players: players,
+                points: points,
+                serverIndex: serverIndex
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+            console.warn("save error", e);
+        }
+    }
+
+    function loadState() {
+        try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            var s = JSON.parse(raw);
+            if (Array.isArray(s.players) && s.players.length === 4) players = s.players;
+            if (Array.isArray(s.points) && s.points.length === 2) points = s.points;
+            if (typeof s.serverIndex === "number") serverIndex = s.serverIndex;
+        } catch (e) {
+            console.warn("load error", e);
+        }
+    }
+
+    /* --- Привязка кнопок --- */
+
+    function bind() {
+        $("btn0").addEventListener("click", function () { addPoint(0); });
+        $("btn1").addEventListener("click", function () { addPoint(1); });
+        $("btnSwitch").addEventListener("click", switchServe);
+        $("btnUndo").addEventListener("click", undo);
+        $("btnReset").addEventListener("click", resetGame);
+        $("btnSettings").addEventListener("click", openSettings);
+        $("btnCancelSettings").addEventListener("click", closeSettings);
+        $("btnSaveSettings").addEventListener("click", saveSettings);
+    }
+
+    /* --- Старт --- */
+
+    // Одноразовая очистка старых ключей (на всякий случай)
     try {
-        const s = JSON.parse(raw);
-        if (Array.isArray(s.players) && s.players.length === 4) players = s.players;
-        if (Array.isArray(s.points) && s.points.length === 2) points = s.points;
-        if (typeof s.serverIndex === "number") serverIndex = s.serverIndex;
-    } catch (e) {
-        console.warn("Не удалось загрузить состояние", e);
-    }
-}
+        localStorage.removeItem("padel_score_state");
+        localStorage.removeItem("padel_score_v2");
+    } catch (e) {}
 
-/* Старт */
-loadState();
-update();
+    bind();
+    loadState();
+    update();
 
+})();
 </script>
 
 </body>
