@@ -6,9 +6,6 @@
 <title>Padel Score</title>
 
 <style>
-    /* ============================================================
-       ТЁМНАЯ ТЕМА (по умолчанию)
-       ============================================================ */
     :root {
         --bg: #1a1d21;
         --card-bg: #262b30;
@@ -35,9 +32,6 @@
         --timer-border: #333a41;
     }
 
-    /* ============================================================
-       СВЕТЛАЯ ТЕМА
-       ============================================================ */
     body.light-theme {
         --bg: #f5f2ec;
         --card-bg: #ffffff;
@@ -196,9 +190,6 @@
 
     .score-card.serving .points { color: var(--accent-light); }
 
-    /* ============================================================
-       ТАЙМЕР
-       ============================================================ */
     .timer-bar {
         display: none;
         align-items: center;
@@ -211,9 +202,7 @@
         border-radius: 14px;
     }
 
-    .timer-bar.visible {
-        display: flex;
-    }
+    .timer-bar.visible { display: flex; }
 
     .timer-display {
         font-size: 28px;
@@ -280,9 +269,7 @@
         background: var(--btn-red);
         color: #ffffff;
     }
-    .reset:active {
-        background: var(--btn-red-active);
-    }
+    .reset:active { background: var(--btn-red-active); }
 
     .message {
         text-align: center;
@@ -294,9 +281,6 @@
         letter-spacing: 0.5px;
     }
 
-    /* ============================================================
-       МОДАЛЬНОЕ ОКНО НАСТРОЕК
-       ============================================================ */
     .modal-overlay {
         position: fixed;
         top: 0; right: 0; bottom: 0; left: 0;
@@ -329,7 +313,6 @@
         letter-spacing: 1px;
     }
 
-    /* Пункт меню, который открывает подменю */
     .menu-item {
         display: flex;
         align-items: center;
@@ -345,9 +328,7 @@
         color: var(--text);
     }
 
-    .menu-item:active {
-        background: var(--btn-bg);
-    }
+    .menu-item:active { background: var(--btn-bg); }
 
     .menu-item .arrow {
         color: var(--text-dim);
@@ -362,6 +343,9 @@
         color: var(--text-dim);
         margin-bottom: 5px;
         letter-spacing: 0.5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .field input {
@@ -438,9 +422,6 @@
 
     .hidden { display: none !important; }
 
-    /* ============================================================
-       ШТОРКА СНИЗУ (для подменю)
-       ============================================================ */
     .sheet-overlay {
         position: fixed;
         top: 0; right: 0; bottom: 0; left: 0;
@@ -464,6 +445,8 @@
         border-left: 2px solid var(--modal-border);
         border-right: 2px solid var(--modal-border);
         animation: slideUp 0.25s ease-out;
+        max-height: 85vh;
+        overflow-y: auto;
     }
 
     @keyframes slideUp {
@@ -479,7 +462,6 @@
         letter-spacing: 1px;
     }
 
-    /* Варианты выбора темы */
     .theme-option {
         display: flex;
         align-items: center;
@@ -495,13 +477,9 @@
         color: var(--text);
     }
 
-    .theme-option:active {
-        background: var(--btn-bg);
-    }
+    .theme-option:active { background: var(--btn-bg); }
 
-    .theme-option.selected {
-        border-color: var(--accent);
-    }
+    .theme-option.selected { border-color: var(--accent); }
 
     .theme-option .check {
         color: var(--accent);
@@ -509,9 +487,6 @@
         font-weight: 800;
     }
 
-    /* ============================================================
-       ЛАНДШАФТНЫЙ РЕЖИМ
-       ============================================================ */
     @media (orientation: landscape) {
         h1 { display: none; }
 
@@ -548,16 +523,8 @@
             padding: 6px 12px;
         }
 
-        .timer-display {
-            font-size: 22px;
-            min-width: 70px;
-        }
-
-        .timer-btn {
-            width: 34px;
-            height: 34px;
-            font-size: 17px;
-        }
+        .timer-display { font-size: 22px; min-width: 70px; }
+        .timer-btn { width: 34px; height: 34px; font-size: 17px; }
 
         .controls { margin-top: 8px; }
 
@@ -614,7 +581,6 @@
         </div>
     </div>
 
-    <!-- ТАЙМЕР (скрыт, если выключен в настройках) -->
     <div class="timer-bar" id="timerBar">
         <button type="button" class="timer-btn" id="btnTimerToggle" title="Старт/пауза">&#x25B6;&#xFE0E;</button>
         <div class="timer-display" id="timerDisplay">00:00</div>
@@ -631,9 +597,7 @@
     </div>
 </div>
 
-<!-- ============================================================
-     ГЛАВНОЕ МЕНЮ НАСТРОЕК
-     ============================================================ -->
+<!-- ГЛАВНОЕ МЕНЮ -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal">
         <h2>Настройки</h2>
@@ -661,9 +625,7 @@
     </div>
 </div>
 
-<!-- ============================================================
-     ШТОРКА: КОМАНДЫ
-     ============================================================ -->
+<!-- ШТОРКА: КОМАНДЫ -->
 <div class="sheet-overlay" id="sheetTeams">
     <div class="sheet">
         <h2>Команды</h2>
@@ -681,26 +643,24 @@
     </div>
 </div>
 
-<!-- ============================================================
-     ШТОРКА: ИГРОКИ
-     ============================================================ -->
+<!-- ШТОРКА: ИГРОКИ -->
 <div class="sheet-overlay" id="sheetPlayers">
     <div class="sheet">
         <h2>Игроки</h2>
         <div class="field">
-            <label>Команда 1 — Игрок 1</label>
+            <label id="labelP1">Команда 1 — Игрок 1</label>
             <input id="p1" value="Игрок 1" maxlength="16">
         </div>
         <div class="field">
-            <label>Команда 1 — Игрок 2</label>
+            <label id="labelP2">Команда 1 — Игрок 2</label>
             <input id="p2" value="Игрок 2" maxlength="16">
         </div>
         <div class="field">
-            <label>Команда 2 — Игрок 3</label>
+            <label id="labelP3">Команда 2 — Игрок 3</label>
             <input id="p3" value="Игрок 3" maxlength="16">
         </div>
         <div class="field">
-            <label>Команда 2 — Игрок 4</label>
+            <label id="labelP4">Команда 2 — Игрок 4</label>
             <input id="p4" value="Игрок 4" maxlength="16">
         </div>
         <div class="modal-buttons">
@@ -709,9 +669,7 @@
     </div>
 </div>
 
-<!-- ============================================================
-     ШТОРКА: ИНТЕРФЕЙС
-     ============================================================ -->
+<!-- ШТОРКА: ИНТЕРФЕЙС -->
 <div class="sheet-overlay" id="sheetInterface">
     <div class="sheet">
         <h2>Интерфейс</h2>
@@ -729,9 +687,7 @@
     </div>
 </div>
 
-<!-- ============================================================
-     ШТОРКА: ТЕМА
-     ============================================================ -->
+<!-- ШТОРКА: ТЕМА -->
 <div class="sheet-overlay" id="sheetTheme">
     <div class="sheet">
         <h2>Тема</h2>
@@ -753,7 +709,7 @@
 (function () {
     "use strict";
 
-    var STORAGE_KEY = "padel_score_v10";
+    var STORAGE_KEY = "padel_score_v11";
 
     var players = ["Игрок 1", "Игрок 2", "Игрок 3", "Игрок 4"];
     var teamNames = ["Команда 1", "Команда 2"];
@@ -765,7 +721,6 @@
     var showTimer = false;
     var currentTheme = "dark";
 
-    /* Таймер */
     var timerSeconds = 0;
     var timerInterval = null;
     var timerRunning = false;
@@ -840,6 +795,21 @@
         showMessage("Новая игра");
     }
 
+    /* ============================================================
+       ОБНОВЛЕНИЕ МЕТОК ИГРОКОВ
+       ============================================================
+       Подставляет названия команд в поля "___ — Игрок N".
+       Вызывается при изменении названий команд.
+       ============================================================ */
+    function updatePlayerLabels() {
+        var t1 = teamNames[0] || "Команда 1";
+        var t2 = teamNames[1] || "Команда 2";
+        $("labelP1").textContent = t1 + " — Игрок 1";
+        $("labelP2").textContent = t1 + " — Игрок 2";
+        $("labelP3").textContent = t2 + " — Игрок 3";
+        $("labelP4").textContent = t2 + " — Игрок 4";
+    }
+
     function update() {
         $("score0").textContent = points[0];
         $("score1").textContent = points[1];
@@ -876,6 +846,9 @@
         } else {
             $("timerBar").classList.remove("visible");
         }
+
+        /* Обновляем метки игроков при любом изменении */
+        updatePlayerLabels();
     }
 
     function showMessage(text) {
@@ -886,9 +859,7 @@
         }, 2000);
     }
 
-    /* ============================================================
-       ТАЙМЕР
-       ============================================================ */
+    /* --- Таймер --- */
 
     function formatTime(sec) {
         var m = Math.floor(sec / 60);
@@ -903,7 +874,7 @@
     function startTimer() {
         if (timerRunning) return;
         timerRunning = true;
-        $("btnTimerToggle").innerHTML = "&#x23F8;&#xFE0E;"; /* ⏸ */
+        $("btnTimerToggle").innerHTML = "&#x23F8;&#xFE0E;";
         $("btnTimerToggle").classList.add("paused");
         timerInterval = setInterval(function () {
             timerSeconds++;
@@ -914,7 +885,7 @@
     function pauseTimer() {
         if (!timerRunning) return;
         timerRunning = false;
-        $("btnTimerToggle").innerHTML = "&#x25B6;&#xFE0E;"; /* ▶ */
+        $("btnTimerToggle").innerHTML = "&#x25B6;&#xFE0E;";
         $("btnTimerToggle").classList.remove("paused");
         clearInterval(timerInterval);
         timerInterval = null;
@@ -934,12 +905,9 @@
         renderTimer();
     }
 
-    /* ============================================================
-       НАСТРОЙКИ
-       ============================================================ */
+    /* --- Настройки --- */
 
     function openSettings() {
-        /* Заполняем поля текущими значениями */
         $("teamName0").value = teamNames[0];
         $("teamName1").value = teamNames[1];
         $("p1").value = players[0];
@@ -949,12 +917,12 @@
         $("toggleTimer").classList.toggle("on", showTimer);
         $("toggleSwitch").classList.toggle("on", showSwitchButton);
         updateThemeChecks();
+        updatePlayerLabels();
         $("settingsModal").classList.add("open");
     }
 
     function closeSettings() {
         $("settingsModal").classList.remove("open");
-        /* Сохраняем всё, что ввели в шторках */
         saveAllSettings();
     }
 
@@ -970,12 +938,21 @@
     }
 
     function openSheet(id) {
+        /* Перед открытием шторки игроков — обновляем метки */
+        if (id === "sheetPlayers") {
+            /* Сначала подтянуть актуальные названия из поля команд (на случай, если юзер их ещё не сохранил) */
+            var t1 = $("teamName0").value.trim() || "Команда 1";
+            var t2 = $("teamName1").value.trim() || "Команда 2";
+            $("labelP1").textContent = t1 + " — Игрок 1";
+            $("labelP2").textContent = t1 + " — Игрок 2";
+            $("labelP3").textContent = t2 + " — Игрок 3";
+            $("labelP4").textContent = t2 + " — Игрок 4";
+        }
         $(id).classList.add("open");
     }
 
     function closeSheet(id) {
         $(id).classList.remove("open");
-        /* Если закрываем шторку интерфейса — применяем изменения */
         if (id === "sheetInterface") {
             showTimer = $("toggleTimer").classList.contains("on");
             showSwitchButton = $("toggleSwitch").classList.contains("on");
@@ -987,9 +964,7 @@
         }
     }
 
-    /* ============================================================
-       ТЕМА
-       ============================================================ */
+    /* --- Тема --- */
 
     function applyTheme() {
         if (currentTheme === "light") {
@@ -1013,9 +988,7 @@
         saveState();
     }
 
-    /* ============================================================
-       СОХРАНЕНИЕ
-       ============================================================ */
+    /* --- Сохранение --- */
 
     function saveState() {
         try {
@@ -1048,26 +1021,18 @@
         } catch (e) { console.warn("load error", e); }
     }
 
-    /* ============================================================
-       ПРИВЯЗКА
-       ============================================================ */
-
     function bind() {
-        /* Игровые карточки */
         $("card0").addEventListener("click", function () { addPoint(0); });
         $("card1").addEventListener("click", function () { addPoint(1); });
 
-        /* Нижние кнопки */
         $("btnSwitch").addEventListener("click", switchServe);
         $("btnUndo").addEventListener("click", undo);
         $("btnReset").addEventListener("click", resetGame);
         $("btnSettings").addEventListener("click", openSettings);
 
-        /* Таймер */
         $("btnTimerToggle").addEventListener("click", toggleTimer);
         $("btnTimerReset").addEventListener("click", resetTimer);
 
-        /* Главное меню настроек — открытие подменю */
         $("menuTeams").addEventListener("click", function () { openSheet("sheetTeams"); });
         $("menuPlayers").addEventListener("click", function () { openSheet("sheetPlayers"); });
         $("menuInterface").addEventListener("click", function () { openSheet("sheetInterface"); });
@@ -1075,7 +1040,6 @@
 
         $("btnCloseSettings").addEventListener("click", closeSettings);
 
-        /* Кнопки "Готово" во всех шторках */
         var closeButtons = document.querySelectorAll(".btn-close-sheet");
         for (var i = 0; i < closeButtons.length; i++) {
             (function (btn) {
@@ -1086,7 +1050,6 @@
             })(closeButtons[i]);
         }
 
-        /* Закрытие шторки тапом по затемнению */
         var sheets = document.querySelectorAll(".sheet-overlay");
         for (var j = 0; j < sheets.length; j++) {
             (function (sheet) {
@@ -1096,7 +1059,6 @@
             })(sheets[j]);
         }
 
-        /* Тумблеры */
         $("toggleTimer").addEventListener("click", function () {
             this.classList.toggle("on");
         });
@@ -1104,12 +1066,22 @@
             this.classList.toggle("on");
         });
 
-        /* Выбор темы */
         $("themeDark").addEventListener("click", function () { setTheme("dark"); });
         $("themeLight").addEventListener("click", function () { setTheme("light"); });
+
+        /* Обновляем метки игроков прямо во время ввода названий команд */
+        $("teamName0").addEventListener("input", function () {
+            var t1 = this.value.trim() || "Команда 1";
+            $("labelP1").textContent = t1 + " — Игрок 1";
+            $("labelP2").textContent = t1 + " — Игрок 2";
+        });
+        $("teamName1").addEventListener("input", function () {
+            var t2 = this.value.trim() || "Команда 2";
+            $("labelP3").textContent = t2 + " — Игрок 3";
+            $("labelP4").textContent = t2 + " — Игрок 4";
+        });
     }
 
-    /* Очистка старых версий */
     try {
         localStorage.removeItem("padel_score_state");
         localStorage.removeItem("padel_score_v2");
@@ -1118,6 +1090,7 @@
         localStorage.removeItem("padel_score_v5");
         localStorage.removeItem("padel_score_v6");
         localStorage.removeItem("padel_score_v9");
+        localStorage.removeItem("padel_score_v10");
     } catch (e) {}
 
     bind();
