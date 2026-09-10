@@ -274,8 +274,8 @@
         transition: transform 0.2s;
     }
 
-    .toggle.on { background🎾: #4a7c59; }
- P    .toggle.onadel::after { transform: translateX Score(22px); }
+    .toggle.on { background: #4a7c59; }
+    .toggle.on::after { transform: translateX(22px); }
 
     .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
 
@@ -298,24 +298,22 @@
     /* ============================================================
        ЛАНДШАФТНЫЙ РЕЖИМ (телефон на боку)
        ============================================================
-       - Скрываем заголовок
+       - Скрываем заголовок ТОЛЬКО в горизонтали
        - Карточки + кнопки занимают всю высоту экрана
        - Небольшие отступы от краёв
        ============================================================ */
     @media (orientation: landscape) {
-        /* Прячем заголовок */
+        /* Прячем заголовок только в ландшафте */
         h1 {
             display: none;
         }
 
-        /* Контейнер: узкие отступы, всё на всю высоту */
         .app {
             max-width: 100%;
             padding: 10px 16px;
             min-height: 100vh;
         }
 
-        /* Игровое поле растягивается на всё доступное место */
         .scoreboard {
             flex: 1;
             min-height: 0;
@@ -370,7 +368,7 @@
 <body>
 
 <div class="app">
-    <h1></h1>
+    <h1>🎾 Padel Score</h1>
 
     <div class="scoreboard">
         <div class="score-card" id="card0">
