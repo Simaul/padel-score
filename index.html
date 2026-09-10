@@ -26,16 +26,6 @@
         flex-direction: column;
     }
 
-    h1 {
-        text-align: center;
-        margin: 4px 0 16px;
-        font-size: 24px;
-        letter-spacing: 3px;
-        color: #8ab4a0;
-        text-transform: uppercase;
-        font-weight: 700;
-    }
-
     .scoreboard {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -53,7 +43,7 @@
         justify-content: space-between;
         border: 2px solid #333a41;
         transition: border-color 0.2s, background 0.2s;
-        min-height: 360px;
+        min-height: 380px;
     }
 
     .score-card.serving {
@@ -62,20 +52,26 @@
     }
 
     .team-label {
-        font-size: 12px;
-        letter-spacing: 1.5px;
-        color: #8a929a;
+        font-size: 13px;
+        letter-spacing: 1px;
+        color: #b8c0c8;
         text-transform: uppercase;
         font-weight: 700;
         margin-bottom: 4px;
+        text-align: center;
+        height: 18px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
     }
 
     .server-name {
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 700;
         color: #e8eaed;
         text-align: center;
-        height: 22px;
+        height: 20px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -123,14 +119,19 @@
 
     .point-button:active { transform: scale(0.96); background: #3d6849; }
 
-    .controls { display: flex; gap: 8px; margin-top: 14px; }
+    .controls {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+    }
 
     .control-button {
         flex: 1;
         border: none;
         border-radius: 12px;
-        padding: 16px 6px;
-        font-size: 13px;
+        padding: 18px 6px;
+        font-size: 22px;
+        line-height: 1;
         font-weight: 700;
         background: #2e343a;
         color: #e8eaed;
@@ -173,6 +174,8 @@
         width: 100%;
         max-width: 400px;
         border: 2px solid #3a424a;
+        max-height: 90vh;
+        overflow-y: auto;
     }
 
     .modal h2 {
@@ -181,6 +184,16 @@
         text-align: center;
         color: #a8d5be;
         letter-spacing: 1px;
+    }
+
+    .modal h3 {
+        margin: 18px 0 10px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #8a929a;
+        border-top: 1px solid #3a424a;
+        padding-top: 14px;
     }
 
     .field { margin-bottom: 14px; }
@@ -207,6 +220,45 @@
 
     .field input:focus { border-color: #8ab4a0; }
 
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+    }
+
+    .toggle-row span {
+        font-size: 14px;
+        color: #e8eaed;
+        font-weight: 600;
+    }
+
+    .toggle {
+        position: relative;
+        width: 50px;
+        height: 28px;
+        background: #3a424a;
+        border-radius: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+        flex-shrink: 0;
+    }
+
+    .toggle::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 22px;
+        height: 22px;
+        background: #e8eaed;
+        border-radius: 50%;
+        transition: transform 0.2s;
+    }
+
+    .toggle.on { background: #4a7c59; }
+    .toggle.on::after { transform: translateX(22px); }
+
     .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
 
     .modal-buttons button {
@@ -222,18 +274,18 @@
     }
 
     .modal-buttons .save { background: #4a7c59; color: #fff; }
+
+    .hidden { display: none !important; }
 </style>
 </head>
 
 <body>
 
 <div class="app">
-    <h1>🎾 Padel Score</h1>
-
     <div class="scoreboard">
         <div class="score-card" id="card0">
             <div>
-                <div class="team-label">Команда 1</div>
+                <div class="team-label" id="teamLabel0">Команда 1</div>
                 <div class="server-name" id="server0">—</div>
                 <div class="serve-indicator">🎾 подача</div>
             </div>
@@ -243,7 +295,7 @@
 
         <div class="score-card" id="card1">
             <div>
-                <div class="team-label">Команда 2</div>
+                <div class="team-label" id="teamLabel1">Команда 2</div>
                 <div class="server-name" id="server1">—</div>
                 <div class="serve-indicator">🎾 подача</div>
             </div>
@@ -255,16 +307,28 @@
     <div class="message" id="message"></div>
 
     <div class="controls">
-        <button type="button" class="control-button" id="btnSwitch">🎾 Смена<br>подачи</button>
-        <button type="button" class="control-button" id="btnUndo">↩️ Отмена</button>
-        <button type="button" class="control-button" id="btnSettings">⚙️ Настройки</button>
-        <button type="button" class="control-button reset" id="btnReset">🔄 Новая</button>
+        <button type="button" class="control-button hidden" id="btnSwitch" title="Смена подачи">🎾</button>
+        <button type="button" class="control-button" id="btnUndo" title="Отмена">↩️</button>
+        <button type="button" class="control-button" id="btnSettings" title="Настройки">⚙️</button>
+        <button type="button" class="control-button reset" id="btnReset" title="Новая игра">🔄</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="settingsModal">
     <div class="modal">
-        <h2>Настройки игроков</h2>
+        <h2>Настройки</h2>
+
+        <h3>Команды</h3>
+        <div class="field">
+            <label>Название команды 1</label>
+            <input id="teamName0" value="Команда 1" maxlength="16">
+        </div>
+        <div class="field">
+            <label>Название команды 2</label>
+            <input id="teamName1" value="Команда 2" maxlength="16">
+        </div>
+
+        <h3>Игроки</h3>
         <div class="field">
             <label>Команда 1 — Игрок 1</label>
             <input id="p1" value="Игрок 1" maxlength="16">
@@ -281,6 +345,13 @@
             <label>Команда 2 — Игрок 4</label>
             <input id="p4" value="Игрок 4" maxlength="16">
         </div>
+
+        <h3>Интерфейс</h3>
+        <div class="toggle-row">
+            <span>Показывать кнопку смены подачи</span>
+            <div class="toggle" id="toggleSwitch"></div>
+        </div>
+
         <div class="modal-buttons">
             <button type="button" id="btnCancelSettings">Отмена</button>
             <button type="button" class="save" id="btnSaveSettings">Сохранить</button>
@@ -292,15 +363,18 @@
 (function () {
     "use strict";
 
-    var STORAGE_KEY = "padel_score_v3";
+    var STORAGE_KEY = "padel_score_v4";
 
-    // Игроки: 0,1 → Команда 1; 2,3 → Команда 2
     var players = ["Игрок 1", "Игрок 2", "Игрок 3", "Игрок 4"];
+    var teamNames = ["Команда 1", "Команда 2"];
     var points = [0, 0];
     var serverIndex = 0;
     var history = [];
+    var showSwitchButton = false;
 
-    var order = [0, 2, 1, 3]; // порядок подачи
+    var order = [0, 2, 1, 3];
+
+    function $(id) { return document.getElementById(id); }
 
     function nextServer(idx) {
         var pos = order.indexOf(idx);
@@ -311,8 +385,6 @@
     function serverTeam() {
         return serverIndex < 2 ? 0 : 1;
     }
-
-    function $(id) { return document.getElementById(id); }
 
     function saveHistory() {
         history.push({
@@ -362,6 +434,9 @@
         $("score0").textContent = points[0];
         $("score1").textContent = points[1];
 
+        $("teamLabel0").textContent = teamNames[0];
+        $("teamLabel1").textContent = teamNames[1];
+
         var st = serverTeam();
         var name = players[serverIndex];
 
@@ -374,6 +449,12 @@
         } else {
             $("card1").classList.add("serving");
             $("card0").classList.remove("serving");
+        }
+
+        if (showSwitchButton) {
+            $("btnSwitch").classList.remove("hidden");
+        } else {
+            $("btnSwitch").classList.add("hidden");
         }
     }
 
@@ -388,10 +469,13 @@
     /* --- Настройки --- */
 
     function openSettings() {
+        $("teamName0").value = teamNames[0];
+        $("teamName1").value = teamNames[1];
         $("p1").value = players[0];
         $("p2").value = players[1];
         $("p3").value = players[2];
         $("p4").value = players[3];
+        $("toggleSwitch").classList.toggle("on", showSwitchButton);
         $("settingsModal").classList.add("open");
     }
 
@@ -400,10 +484,13 @@
     }
 
     function saveSettings() {
+        teamNames[0] = $("teamName0").value.trim() || "Команда 1";
+        teamNames[1] = $("teamName1").value.trim() || "Команда 2";
         players[0] = $("p1").value.trim() || "Игрок 1";
         players[1] = $("p2").value.trim() || "Игрок 2";
         players[2] = $("p3").value.trim() || "Игрок 3";
         players[3] = $("p4").value.trim() || "Игрок 4";
+        showSwitchButton = $("toggleSwitch").classList.contains("on");
         closeSettings();
         update();
         saveState();
@@ -414,12 +501,13 @@
 
     function saveState() {
         try {
-            var state = {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
                 players: players,
+                teamNames: teamNames,
                 points: points,
-                serverIndex: serverIndex
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                serverIndex: serverIndex,
+                showSwitchButton: showSwitchButton
+            }));
         } catch (e) {
             console.warn("save error", e);
         }
@@ -431,14 +519,16 @@
             if (!raw) return;
             var s = JSON.parse(raw);
             if (Array.isArray(s.players) && s.players.length === 4) players = s.players;
+            if (Array.isArray(s.teamNames) && s.teamNames.length === 2) teamNames = s.teamNames;
             if (Array.isArray(s.points) && s.points.length === 2) points = s.points;
             if (typeof s.serverIndex === "number") serverIndex = s.serverIndex;
+            if (typeof s.showSwitchButton === "boolean") showSwitchButton = s.showSwitchButton;
         } catch (e) {
             console.warn("load error", e);
         }
     }
 
-    /* --- Привязка кнопок --- */
+    /* --- Привязка --- */
 
     function bind() {
         $("btn0").addEventListener("click", function () { addPoint(0); });
@@ -449,14 +539,16 @@
         $("btnSettings").addEventListener("click", openSettings);
         $("btnCancelSettings").addEventListener("click", closeSettings);
         $("btnSaveSettings").addEventListener("click", saveSettings);
+        $("toggleSwitch").addEventListener("click", function () {
+            this.classList.toggle("on");
+        });
     }
 
-    /* --- Старт --- */
-
-    // Одноразовая очистка старых ключей (на всякий случай)
+    /* --- Очистка старых версий --- */
     try {
         localStorage.removeItem("padel_score_state");
         localStorage.removeItem("padel_score_v2");
+        localStorage.removeItem("padel_score_v3");
     } catch (e) {}
 
     bind();
