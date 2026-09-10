@@ -335,6 +335,11 @@
         font-size: 18px;
     }
 
+    .menu-item .menu-icon {
+        margin-right: 10px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Symbol", sans-serif;
+    }
+
     .field { margin-bottom: 14px; }
 
     .field label {
@@ -478,13 +483,137 @@
     }
 
     .theme-option:active { background: var(--btn-bg); }
-
     .theme-option.selected { border-color: var(--accent); }
-
     .theme-option .check {
         color: var(--accent);
         font-size: 18px;
         font-weight: 800;
+    }
+
+    /* ============================================================
+       КАРТОЧКА СОХРАНЁННОГО МАТЧА
+       ============================================================ */
+    .match-card {
+        background: var(--input-bg);
+        border: 2px solid var(--modal-border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 10px;
+        position: relative;
+    }
+
+    .match-date {
+        font-size: 12px;
+        color: var(--text-dim);
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .match-score {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .match-team-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+    }
+
+    .match-team-name.right {
+        text-align: right;
+    }
+
+    .match-score-num {
+        color: var(--accent-light);
+        font-size: 22px;
+        margin: 0 10px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .match-players {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid var(--modal-border);
+        line-height: 1.5;
+    }
+
+    .match-delete {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-dim);
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Symbol", sans-serif;
+    }
+
+    .match-delete:active {
+        background: var(--btn-red);
+        color: #fff;
+    }
+
+    .empty-matches {
+        text-align: center;
+        color: var(--text-dim);
+        font-size: 14px;
+        padding: 30px 10px;
+        font-style: italic;
+    }
+
+    /* Счётчик матчей в главном меню */
+    .menu-badge {
+        background: var(--accent);
+        color: var(--bg);
+        font-size: 12px;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 10px;
+        margin-left: 8px;
+    }
+
+    .match-action-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .match-action-row button {
+        flex: 1;
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        background: var(--btn-green);
+        color: #fff;
+    }
+
+    .match-action-row button.danger {
+        background: var(--btn-red);
+    }
+
+    .match-action-row button:active {
+        transform: scale(0.97);
+        opacity: 0.9;
     }
 
     @media (orientation: landscape) {
@@ -602,6 +731,10 @@
     <div class="modal">
         <h2>Настройки</h2>
 
+        <div class="menu-item" id="menuMatches">
+            <span><span class="menu-icon">&#x1F4BE;&#xFE0E;</span>Матчи <span class="menu-badge hidden" id="matchesCount">0</span></span>
+            <span class="arrow">&#x203A;</span>
+        </div>
         <div class="menu-item" id="menuTeams">
             <span>Команды</span>
             <span class="arrow">&#x203A;</span>
@@ -621,6 +754,27 @@
 
         <div class="modal-buttons">
             <button type="button" id="btnCloseSettings">Закрыть</button>
+        </div>
+    </div>
+</div>
+
+<!-- ШТОРКА: МАТЧИ -->
+<div class="sheet-overlay" id="sheetMatches">
+    <div class="sheet">
+        <h2>Матчи</h2>
+
+        <div class="match-action-row">
+            <button type="button" id="btnSaveMatch">&#x1F4BE;&#xFE0E; Сохранить текущий матч</button>
+        </div>
+
+        <div id="matchesList"></div>
+
+        <div class="match-action-row" id="clearAllRow" style="margin-top:16px;">
+            <button type="button" class="danger" id="btnClearMatches">Очистить все</button>
+        </div>
+
+        <div class="modal-buttons">
+            <button type="button" class="btn-close-sheet">Готово</button>
         </div>
     </div>
 </div>
@@ -709,7 +863,8 @@
 (function () {
     "use strict";
 
-    var STORAGE_KEY = "padel_score_v11";
+    var STORAGE_KEY = "padel_score_v12";
+    var MATCHES_KEY = "padel_matches_v1";
 
     var players = ["Игрок 1", "Игрок 2", "Игрок 3", "Игрок 4"];
     var teamNames = ["Команда 1", "Команда 2"];
@@ -720,6 +875,9 @@
     var showSwitchButton = false;
     var showTimer = false;
     var currentTheme = "dark";
+
+    /* Время начала текущего матча (null = ещё не начат) */
+    var matchStartTime = null;
 
     var timerSeconds = 0;
     var timerInterval = null;
@@ -749,6 +907,11 @@
     }
 
     function addPoint(team) {
+        /* Если матч ещё не начат — фиксируем время старта */
+        if (matchStartTime === null) {
+            matchStartTime = Date.now();
+        }
+
         saveHistory();
         points[team] = points[team] + 1;
 
@@ -790,17 +953,170 @@
         serverIndex = 0;
         serveCount = 1;
         history = [];
+        matchStartTime = null;
         update();
         saveState();
         showMessage("Новая игра");
     }
 
     /* ============================================================
-       ОБНОВЛЕНИЕ МЕТОК ИГРОКОВ
-       ============================================================
-       Подставляет названия команд в поля "___ — Игрок N".
-       Вызывается при изменении названий команд.
+       ФОРМАТИРОВАНИЕ ДАТЫ И ВРЕМЕНИ
        ============================================================ */
+
+    function pad2(n) { return n < 10 ? "0" + n : "" + n; }
+
+    function formatDateTime(ts) {
+        var d = new Date(ts);
+        var day = pad2(d.getDate());
+        var month = pad2(d.getMonth() + 1);
+        var year = ("" + d.getFullYear()).slice(-2);
+        var hours = pad2(d.getHours());
+        var minutes = pad2(d.getMinutes());
+        return day + "." + month + "." + year + " " + hours + ":" + minutes;
+    }
+
+    function formatTimeOnly(ts) {
+        var d = new Date(ts);
+        return pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+    }
+
+    /* ============================================================
+       МАТЧИ
+       ============================================================ */
+
+    function loadMatches() {
+        try {
+            var raw = localStorage.getItem(MATCHES_KEY);
+            if (!raw) return [];
+            var arr = JSON.parse(raw);
+            return Array.isArray(arr) ? arr : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveMatches(matches) {
+        try {
+            localStorage.setItem(MATCHES_KEY, JSON.stringify(matches));
+        } catch (e) {
+            console.warn("save matches error", e);
+        }
+    }
+
+    function saveCurrentMatch() {
+        /* Нечего сохранять, если не набрано ни одного очка */
+        if (points[0] === 0 && points[1] === 0) {
+            showMessage("Счёт 0:0 — нечего сохранять");
+            return;
+        }
+
+        var now = Date.now();
+        var start = matchStartTime || now;
+
+        var match = {
+            id: now,
+            startTime: start,
+            endTime: now,
+            teamNames: [teamNames[0], teamNames[1]],
+            players: [players[0], players[1], players[2], players[3]],
+            points: [points[0], points[1]]
+        };
+
+        var matches = loadMatches();
+        matches.unshift(match);
+        saveMatches(matches);
+
+        renderMatchesList();
+        updateMatchesCount();
+        showMessage("Матч сохранён");
+    }
+
+    function deleteMatch(id) {
+        if (!confirm("Удалить этот матч?")) return;
+        var matches = loadMatches();
+        matches = matches.filter(function (m) { return m.id !== id; });
+        saveMatches(matches);
+        renderMatchesList();
+        updateMatchesCount();
+    }
+
+    function clearAllMatches() {
+        if (!confirm("Удалить все сохранённые матчи?")) return;
+        saveMatches([]);
+        renderMatchesList();
+        updateMatchesCount();
+        showMessage("Все матчи удалены");
+    }
+
+    function renderMatchesList() {
+        var list = $("matchesList");
+        var matches = loadMatches();
+
+        if (matches.length === 0) {
+            list.innerHTML = '<div class="empty-matches">Пока нет сохранённых матчей</div>';
+            $("clearAllRow").style.display = "none";
+            return;
+        }
+
+        $("clearAllRow").style.display = "flex";
+
+        var html = "";
+        for (var i = 0; i < matches.length; i++) {
+            var m = matches[i];
+            var dateStr = formatDateTime(m.startTime) + " → " + formatTimeOnly(m.endTime);
+
+            var players1 = m.players[0] + ", " + m.players[1];
+            var players2 = m.players[2] + ", " + m.players[3];
+
+            html += '<div class="match-card">';
+            html += '<button type="button" class="match-delete" data-id="' + m.id + '" title="Удалить">&#x2715;&#xFE0E;</button>';
+            html += '<div class="match-date">' + dateStr + '</div>';
+            html += '<div class="match-score">';
+            html += '<span class="match-team-name">' + escapeHtml(m.teamNames[0]) + '</span>';
+            html += '<span class="match-score-num">' + m.points[0] + ' : ' + m.points[1] + '</span>';
+            html += '<span class="match-team-name right">' + escapeHtml(m.teamNames[1]) + '</span>';
+            html += '</div>';
+            html += '<div class="match-players">' + escapeHtml(players1) + ' — ' + escapeHtml(players2) + '</div>';
+            html += '</div>';
+        }
+
+        list.innerHTML = html;
+
+        /* Привязываем кнопки удаления */
+        var deleteButtons = list.querySelectorAll(".match-delete");
+        for (var j = 0; j < deleteButtons.length; j++) {
+            (function (btn) {
+                btn.addEventListener("click", function () {
+                    var id = parseInt(btn.getAttribute("data-id"), 10);
+                    deleteMatch(id);
+                });
+            })(deleteButtons[j]);
+        }
+    }
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
+    function updateMatchesCount() {
+        var matches = loadMatches();
+        var badge = $("matchesCount");
+        if (matches.length === 0) {
+            badge.classList.add("hidden");
+        } else {
+            badge.textContent = matches.length;
+            badge.classList.remove("hidden");
+        }
+    }
+
+    /* ============================================================
+       ОБНОВЛЕНИЕ ЭКРАНА
+       ============================================================ */
+
     function updatePlayerLabels() {
         var t1 = teamNames[0] || "Команда 1";
         var t2 = teamNames[1] || "Команда 2";
@@ -847,7 +1163,6 @@
             $("timerBar").classList.remove("visible");
         }
 
-        /* Обновляем метки игроков при любом изменении */
         updatePlayerLabels();
     }
 
@@ -918,6 +1233,7 @@
         $("toggleSwitch").classList.toggle("on", showSwitchButton);
         updateThemeChecks();
         updatePlayerLabels();
+        updateMatchesCount();
         $("settingsModal").classList.add("open");
     }
 
@@ -938,15 +1254,17 @@
     }
 
     function openSheet(id) {
-        /* Перед открытием шторки игроков — обновляем метки */
         if (id === "sheetPlayers") {
-            /* Сначала подтянуть актуальные названия из поля команд (на случай, если юзер их ещё не сохранил) */
             var t1 = $("teamName0").value.trim() || "Команда 1";
             var t2 = $("teamName1").value.trim() || "Команда 2";
             $("labelP1").textContent = t1 + " — Игрок 1";
             $("labelP2").textContent = t1 + " — Игрок 2";
             $("labelP3").textContent = t2 + " — Игрок 3";
             $("labelP4").textContent = t2 + " — Игрок 4";
+        }
+        if (id === "sheetMatches") {
+            renderMatchesList();
+            updateMatchesCount();
         }
         $(id).classList.add("open");
     }
@@ -1000,7 +1318,8 @@
                 serveCount: serveCount,
                 showSwitchButton: showSwitchButton,
                 showTimer: showTimer,
-                currentTheme: currentTheme
+                currentTheme: currentTheme,
+                matchStartTime: matchStartTime
             }));
         } catch (e) { console.warn("save error", e); }
     }
@@ -1018,6 +1337,7 @@
             if (typeof s.showSwitchButton === "boolean") showSwitchButton = s.showSwitchButton;
             if (typeof s.showTimer === "boolean") showTimer = s.showTimer;
             if (typeof s.currentTheme === "string") currentTheme = s.currentTheme;
+            if (typeof s.matchStartTime === "number") matchStartTime = s.matchStartTime;
         } catch (e) { console.warn("load error", e); }
     }
 
@@ -1033,12 +1353,17 @@
         $("btnTimerToggle").addEventListener("click", toggleTimer);
         $("btnTimerReset").addEventListener("click", resetTimer);
 
+        $("menuMatches").addEventListener("click", function () { openSheet("sheetMatches"); });
         $("menuTeams").addEventListener("click", function () { openSheet("sheetTeams"); });
         $("menuPlayers").addEventListener("click", function () { openSheet("sheetPlayers"); });
         $("menuInterface").addEventListener("click", function () { openSheet("sheetInterface"); });
         $("menuTheme").addEventListener("click", function () { openSheet("sheetTheme"); });
 
         $("btnCloseSettings").addEventListener("click", closeSettings);
+
+        /* Кнопки в шторке матчей */
+        $("btnSaveMatch").addEventListener("click", saveCurrentMatch);
+        $("btnClearMatches").addEventListener("click", clearAllMatches);
 
         var closeButtons = document.querySelectorAll(".btn-close-sheet");
         for (var i = 0; i < closeButtons.length; i++) {
@@ -1069,7 +1394,6 @@
         $("themeDark").addEventListener("click", function () { setTheme("dark"); });
         $("themeLight").addEventListener("click", function () { setTheme("light"); });
 
-        /* Обновляем метки игроков прямо во время ввода названий команд */
         $("teamName0").addEventListener("input", function () {
             var t1 = this.value.trim() || "Команда 1";
             $("labelP1").textContent = t1 + " — Игрок 1";
@@ -1091,6 +1415,7 @@
         localStorage.removeItem("padel_score_v6");
         localStorage.removeItem("padel_score_v9");
         localStorage.removeItem("padel_score_v10");
+        localStorage.removeItem("padel_score_v11");
     } catch (e) {}
 
     bind();
@@ -1098,6 +1423,7 @@
     applyTheme();
     renderTimer();
     update();
+    updateMatchesCount();
 
 })();
 </script>
