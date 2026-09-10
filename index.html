@@ -14,14 +14,14 @@
     html, body {
         margin: 0;
         padding: 0;
-        height: 100%;
+        min-height: 100%;
         overscroll-behavior: none;
     }
 
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #0a0a0a;
-        color: #ffffff;
+        background: #1a1d21;
+        color: #e8eaed;
         min-height: 100vh;
         user-select: none;
     }
@@ -38,10 +38,11 @@
     h1 {
         text-align: center;
         margin: 4px 0 16px;
-        font-size: 26px;
-        letter-spacing: 2px;
-        color: #ffd60a;
+        font-size: 24px;
+        letter-spacing: 3px;
+        color: #8ab4a0;
         text-transform: uppercase;
+        font-weight: 700;
     }
 
     .scoreboard {
@@ -52,44 +53,54 @@
     }
 
     .score-card {
-        background: #1c1c1e;
+        background: #262b30;
         border-radius: 20px;
         padding: 14px 10px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
-        border: 3px solid transparent;
+        border: 2px solid #333a41;
         transition: border-color 0.2s, background 0.2s;
-        min-height: 380px;
+        min-height: 360px;
     }
 
     .score-card.serving {
-        border-color: #ffd60a;
-        background: #2a2410;
+        border-color: #8ab4a0;
+        background: #2a3438;
     }
 
-    .team-name {
-        width: 100%;
-        border: none;
-        text-align: center;
-        font-size: 18px;
+    .team-label {
+        font-size: 12px;
+        letter-spacing: 1.5px;
+        color: #8a929a;
+        text-transform: uppercase;
         font-weight: 700;
-        outline: none;
-        background: transparent;
-        color: #ffffff;
-        padding: 4px;
+        margin-bottom: 4px;
+    }
+
+    .server-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #e8eaed;
+        text-align: center;
+        height: 22px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
     }
 
     .serve-indicator {
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 700;
-        color: #ffd60a;
+        color: #8ab4a0;
         letter-spacing: 1px;
-        height: 18px;
+        height: 16px;
         opacity: 0;
         transition: opacity 0.2s;
         text-transform: uppercase;
+        margin-top: 2px;
     }
 
     .score-card.serving .serve-indicator {
@@ -97,78 +108,162 @@
     }
 
     .points {
-        font-size: 130px;
-        font-weight: 900;
+        font-size: 88px;
+        font-weight: 800;
         line-height: 1;
-        color: #ffffff;
+        color: #e8eaed;
         font-variant-numeric: tabular-nums;
+        margin: 6px 0;
     }
 
     .score-card.serving .points {
-        color: #ffd60a;
+        color: #a8d5be;
     }
 
     .point-button {
         width: 100%;
         border: none;
-        border-radius: 16px;
-        background: #34c759;
-        color: #000;
-        font-size: 24px;
-        font-weight: 800;
-        padding: 22px 10px;
+        border-radius: 14px;
+        background: #4a7c59;
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 700;
+        padding: 18px 10px;
         letter-spacing: 1px;
         cursor: pointer;
-        transition: transform 0.05s;
+        transition: transform 0.05s, background 0.1s;
     }
 
     .point-button:active {
         transform: scale(0.96);
-        background: #2fb350;
+        background: #3d6849;
     }
 
     .controls {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         margin-top: 14px;
     }
 
     .control-button {
         flex: 1;
         border: none;
-        border-radius: 14px;
-        padding: 18px 10px;
-        font-size: 15px;
+        border-radius: 12px;
+        padding: 16px 6px;
+        font-size: 13px;
         font-weight: 700;
-        background: #2c2c2e;
-        color: #ffffff;
+        background: #2e343a;
+        color: #e8eaed;
         cursor: pointer;
         letter-spacing: 0.5px;
     }
 
     .control-button:active {
         transform: scale(0.97);
-    }
-
-    .serve-button {
-        background: #ffd60a;
-        color: #000;
-        flex: 1.4;
+        background: #383f47;
     }
 
     .reset {
-        background: #ff3b30;
-        color: white;
+        background: #8b4a4a;
+        color: #ffffff;
+    }
+
+    .reset:active {
+        background: #723c3c;
     }
 
     .message {
         text-align: center;
-        min-height: 26px;
+        min-height: 22px;
         margin-top: 10px;
-        font-weight: 800;
+        font-weight: 700;
+        font-size: 15px;
+        color: #a8d5be;
+        letter-spacing: 0.5px;
+    }
+
+    /* Модальное окно настроек */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.7);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        padding: 20px;
+    }
+
+    .modal-overlay.open {
+        display: flex;
+    }
+
+    .modal {
+        background: #262b30;
+        border-radius: 18px;
+        padding: 22px 18px;
+        width: 100%;
+        max-width: 400px;
+        border: 2px solid #3a424a;
+    }
+
+    .modal h2 {
+        margin: 0 0 18px;
         font-size: 18px;
-        color: #ffd60a;
+        text-align: center;
+        color: #a8d5be;
         letter-spacing: 1px;
+    }
+
+    .field {
+        margin-bottom: 14px;
+    }
+
+    .field label {
+        display: block;
+        font-size: 13px;
+        color: #8a929a;
+        margin-bottom: 5px;
+        letter-spacing: 0.5px;
+    }
+
+    .field input {
+        width: 100%;
+        background: #1a1d21;
+        border: 2px solid #3a424a;
+        border-radius: 10px;
+        padding: 12px;
+        color: #e8eaed;
+        font-size: 16px;
+        font-weight: 600;
+        outline: none;
+    }
+
+    .field input:focus {
+        border-color: #8ab4a0;
+    }
+
+    .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .modal-buttons button {
+        flex: 1;
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        background: #2e343a;
+        color: #e8eaed;
+    }
+
+    .modal-buttons .save {
+        background: #4a7c59;
+        color: #fff;
     }
 </style>
 </head>
@@ -182,13 +277,11 @@
     <div class="scoreboard">
 
         <div class="score-card" id="card0">
-            <input
-                class="team-name"
-                id="name0"
-                value="Команда 1"
-                maxlength="14"
-            >
-            <div class="serve-indicator">🎾 Подача</div>
+            <div>
+                <div class="team-label">Команда 1</div>
+                <div class="server-name" id="server0">—</div>
+                <div class="serve-indicator">🎾 подача</div>
+            </div>
             <div class="points" id="score0">0</div>
             <button class="point-button" onclick="addPoint(0)">
                 + ОЧКО
@@ -196,13 +289,11 @@
         </div>
 
         <div class="score-card" id="card1">
-            <input
-                class="team-name"
-                id="name1"
-                value="Команда 2"
-                maxlength="14"
-            >
-            <div class="serve-indicator">🎾 Подача</div>
+            <div>
+                <div class="team-label">Команда 2</div>
+                <div class="server-name" id="server1">—</div>
+                <div class="serve-indicator">🎾 подача</div>
+            </div>
             <div class="points" id="score1">0</div>
             <button class="point-button" onclick="addPoint(1)">
                 + ОЧКО
@@ -214,11 +305,14 @@
     <div class="message" id="message"></div>
 
     <div class="controls">
-        <button class="control-button serve-button" onclick="switchServe()">
-            🎾 Смена подачи
+        <button class="control-button" onclick="switchServe()">
+            🎾 Смена<br>подачи
         </button>
         <button class="control-button" onclick="undo()">
             ↩️ Отмена
+        </button>
+        <button class="control-button" onclick="openSettings()">
+            ⚙️ Настройки
         </button>
         <button class="control-button reset" onclick="resetGame()">
             🔄 Новая
@@ -227,31 +321,78 @@
 
 </div>
 
+<!-- Настройки -->
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+        <h2>Настройки игроков</h2>
+
+        <div class="field">
+            <label>Команда 1 — Игрок 1</label>
+            <input id="p1" value="Игрок 1" maxlength="16">
+        </div>
+        <div class="field">
+            <label>Команда 1 — Игрок 2</label>
+            <input id="p2" value="Игрок 2" maxlength="16">
+        </div>
+        <div class="field">
+            <label>Команда 2 — Игрок 3</label>
+            <input id="p3" value="Игрок 3" maxlength="16">
+        </div>
+        <div class="field">
+            <label>Команда 2 — Игрок 4</label>
+            <input id="p4" value="Игрок 4" maxlength="16">
+        </div>
+
+        <div class="modal-buttons">
+            <button onclick="closeSettings()">Отмена</button>
+            <button class="save" onclick="saveSettings()">Сохранить</button>
+        </div>
+    </div>
+</div>
+
 <script>
 
+/*
+ * Игроки:
+ *   0 → Игрок 1 (Команда 1)
+ *   1 → Игрок 2 (Команда 1)
+ *   2 → Игрок 3 (Команда 2)
+ *   3 → Игрок 4 (Команда 2)
+ *
+ * Порядок подачи: 0 → 2 → 1 → 3 → 0 → 2 → 1 → 3 ...
+ */
+
+const STORAGE_KEY = "padel_score_v2";
+
+let players = ["Игрок 1", "Игрок 2", "Игрок 3", "Игрок 4"];
 let points = [0, 0];
-let serving = 0;
+let serverIndex = 0;   // индекс текущего подающего (0..3)
 let history = [];
 
-const STORAGE_KEY = "padel_score_state";
-
-function saveHistory() {
-    history.push({
-        points: [...points],
-        serving: serving
-    });
+/* Какой команде принадлежит подающий: 0,1 → Команда 1; 2,3 → Команда 2 */
+function serverTeam() {
+    return serverIndex < 2 ? 0 : 1;
 }
 
-function addPoint(player) {
+function addPoint(team) {
     saveHistory();
-    points[player]++;
+    points[team]++;
+    // автопереход подачи по кругу 0→2→1→3
+    serverIndex = nextServer(serverIndex);
     update();
     saveState();
 }
 
+function nextServer(idx) {
+    // порядок: 0 → 2 → 1 → 3 → 0 ...
+    const order = [0, 2, 1, 3];
+    const pos = order.indexOf(idx);
+    return order[(pos + 1) % 4];
+}
+
 function switchServe() {
     saveHistory();
-    serving = serving === 0 ? 1 : 0;
+    serverIndex = nextServer(serverIndex);
     update();
     saveState();
 }
@@ -263,7 +404,7 @@ function undo() {
     }
     const prev = history.pop();
     points = prev.points;
-    serving = prev.serving;
+    serverIndex = prev.serverIndex;
     update();
     saveState();
 }
@@ -271,7 +412,7 @@ function undo() {
 function resetGame() {
     if (!confirm("Начать новую игру?")) return;
     points = [0, 0];
-    serving = 0;
+    serverIndex = 0;
     history = [];
     update();
     saveState();
@@ -282,8 +423,14 @@ function update() {
     document.getElementById("score0").textContent = points[0];
     document.getElementById("score1").textContent = points[1];
 
-    document.getElementById("card0").classList.toggle("serving", serving === 0);
-    document.getElementById("card1").classList.toggle("serving", serving === 1);
+    const st = serverTeam();
+    const serverName = players[serverIndex];
+
+    document.getElementById("server0").textContent = st === 0 ? serverName : "—";
+    document.getElementById("server1").textContent = st === 1 ? serverName : "—";
+
+    document.getElementById("card0").classList.toggle("serving", st === 0);
+    document.getElementById("card1").classList.toggle("serving", st === 1);
 }
 
 function showMessage(text) {
@@ -294,17 +441,35 @@ function showMessage(text) {
     }, 2000);
 }
 
-/* --- Сохранение между перезагрузками --- */
+/* --- Настройки --- */
+
+function openSettings() {
+    document.getElementById("p1").value = players[0];
+    document.getElementById("p2").value = players[1];
+    document.getElementById("p3").value = players[2];
+    document.getElementById("p4").value = players[3];
+    document.getElementById("settingsModal").classList.add("open");
+}
+
+function closeSettings() {
+    document.getElementById("settingsModal").classList.remove("open");
+}
+
+function saveSettings() {
+    players[0] = document.getElementById("p1").value.trim() || "Игрок 1";
+    players[1] = document.getElementById("p2").value.trim() || "Игрок 2";
+    players[2] = document.getElementById("p3").value.trim() || "Игрок 3";
+    players[3] = document.getElementById("p4").value.trim() || "Игрок 4";
+    closeSettings();
+    update();
+    saveState();
+    showMessage("Сохранено");
+}
+
+/* --- Сохранение --- */
 
 function saveState() {
-    const state = {
-        points: points,
-        serving: serving,
-        names: [
-            document.getElementById("name0").value,
-            document.getElementById("name1").value
-        ]
-    };
+    const state = { players, points, serverIndex };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
@@ -312,23 +477,14 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
     try {
-        const state = JSON.parse(raw);
-        if (Array.isArray(state.points) && state.points.length === 2) {
-            points = state.points;
-            serving = state.serving ?? 0;
-            if (state.names) {
-                document.getElementById("name0").value = state.names[0] || "Команда 1";
-                document.getElementById("name1").value = state.names[1] || "Команда 2";
-            }
-        }
+        const s = JSON.parse(raw);
+        if (Array.isArray(s.players) && s.players.length === 4) players = s.players;
+        if (Array.isArray(s.points) && s.points.length === 2) points = s.points;
+        if (typeof s.serverIndex === "number") serverIndex = s.serverIndex;
     } catch (e) {
         console.warn("Не удалось загрузить состояние", e);
     }
 }
-
-/* Сохраняем имя команды при изменении */
-document.getElementById("name0").addEventListener("input", saveState);
-document.getElementById("name1").addEventListener("input", saveState);
 
 /* Старт */
 loadState();
