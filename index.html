@@ -23,6 +23,7 @@
         --btn-red: #8b4a4a;
         --btn-red-active: #723c3c;
         --btn-green: #4a7c59;
+        --btn-green-active: #3d6849;
         --input-bg: #1a1d21;
         --input-border: #3a424a;
         --modal-bg: #262b30;
@@ -30,6 +31,8 @@
         --overlay: rgba(0,0,0,0.7);
         --timer-bg: #262b30;
         --timer-border: #333a41;
+        --group-bg: #2a2f35;
+        --group-border: #3a424a;
     }
 
     body.light-theme {
@@ -49,6 +52,7 @@
         --btn-red: #c25a5a;
         --btn-red-active: #a84a4a;
         --btn-green: #4a7c59;
+        --btn-green-active: #3d6849;
         --input-bg: #f5f2ec;
         --input-border: #d0ccc4;
         --modal-bg: #ffffff;
@@ -56,6 +60,8 @@
         --overlay: rgba(0,0,0,0.4);
         --timer-bg: #ffffff;
         --timer-border: #e0dcd2;
+        --group-bg: #f0ece4;
+        --group-border: #e0dcd2;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -313,6 +319,37 @@
         letter-spacing: 1px;
     }
 
+    /* Зелёная кнопка "Сохранить матч" */
+    .save-match-btn {
+        width: 100%;
+        border: none;
+        border-radius: 14px;
+        padding: 18px 16px;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+        background: var(--btn-green);
+        color: #ffffff;
+        margin-bottom: 14px;
+        letter-spacing: 0.5px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Symbol", sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .save-match-btn:active {
+        transform: scale(0.97);
+        background: var(--btn-green-active);
+    }
+
+    /* Иконка внутри кнопки */
+    .save-match-btn .btn-icon {
+        font-size: 20px;
+    }
+
+    /* Пункт меню */
     .menu-item {
         display: flex;
         align-items: center;
@@ -330,21 +367,62 @@
 
     .menu-item:active { background: var(--btn-bg); }
 
+    /* Левая часть: иконка + текст */
+    .menu-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .menu-icon {
+        font-size: 20px;
+        line-height: 1;
+        width: 24px;
+        text-align: center;
+        color: var(--accent);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Symbol", sans-serif;
+    }
+
     .menu-item .arrow {
         color: var(--text-dim);
         font-size: 18px;
     }
 
-    .menu-item .menu-icon {
-        margin-right: 10px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Symbol", sans-serif;
+    .menu-badge {
+        background: var(--accent);
+        color: var(--bg);
+        font-size: 12px;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 10px;
+        margin-left: 8px;
     }
 
-    .field { margin-bottom: 14px; }
+    /* Группа "Команда" в шторке состава */
+    .team-group {
+        background: var(--group-bg);
+        border: 2px solid var(--group-border);
+        border-radius: 14px;
+        padding: 14px;
+        margin-bottom: 14px;
+    }
+
+    .team-group-title {
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--accent-light);
+        margin-bottom: 12px;
+        text-align: center;
+    }
+
+    .field { margin-bottom: 12px; }
+    .field:last-child { margin-bottom: 0; }
 
     .field label {
         display: block;
-        font-size: 13px;
+        font-size: 12px;
         color: var(--text-dim);
         margin-bottom: 5px;
         letter-spacing: 0.5px;
@@ -490,9 +568,7 @@
         font-weight: 800;
     }
 
-    /* ============================================================
-       КАРТОЧКА СОХРАНЁННОГО МАТЧА
-       ============================================================ */
+    /* Карточка матча */
     .match-card {
         background: var(--input-bg);
         border: 2px solid var(--modal-border);
@@ -527,9 +603,7 @@
         flex: 1;
     }
 
-    .match-team-name.right {
-        text-align: right;
-    }
+    .match-team-name.right { text-align: right; }
 
     .match-score-num {
         color: var(--accent-light);
@@ -578,21 +652,10 @@
         font-style: italic;
     }
 
-    /* Счётчик матчей в главном меню */
-    .menu-badge {
-        background: var(--accent);
-        color: var(--bg);
-        font-size: 12px;
-        font-weight: 800;
-        padding: 2px 8px;
-        border-radius: 10px;
-        margin-left: 8px;
-    }
-
     .match-action-row {
         display: flex;
         gap: 10px;
-        margin-bottom: 16px;
+        margin-top: 16px;
     }
 
     .match-action-row button {
@@ -607,9 +670,7 @@
         color: #fff;
     }
 
-    .match-action-row button.danger {
-        background: var(--btn-red);
-    }
+    .match-action-row button.danger { background: var(--btn-red); }
 
     .match-action-row button:active {
         transform: scale(0.97);
@@ -731,24 +792,46 @@
     <div class="modal">
         <h2>Настройки</h2>
 
+        <!-- Кнопка "Сохранить матч" -->
+        <button type="button" class="save-match-btn" id="btnSaveMatchMenu">
+            <span class="btn-icon">&#x1F4BE;&#xFE0E;</span>
+            <span>Сохранить матч</span>
+        </button>
+
+        <!-- Состав (иконка: голова человека) -->
+        <div class="menu-item" id="menuRoster">
+            <span class="menu-left">
+                <span class="menu-icon">&#x1F464;&#xFE0E;</span>
+                <span>Состав</span>
+            </span>
+            <span class="arrow">&#x203A;</span>
+        </div>
+
+        <!-- Матчи (иконка: файл) -->
         <div class="menu-item" id="menuMatches">
-            <span><span class="menu-icon">&#x1F4BE;&#xFE0E;</span>Матчи <span class="menu-badge hidden" id="matchesCount">0</span></span>
+            <span class="menu-left">
+                <span class="menu-icon">&#x1F4C4;&#xFE0E;</span>
+                <span>Матчи</span>
+                <span class="menu-badge hidden" id="matchesCount">0</span>
+            </span>
             <span class="arrow">&#x203A;</span>
         </div>
-        <div class="menu-item" id="menuTeams">
-            <span>Команды</span>
-            <span class="arrow">&#x203A;</span>
-        </div>
-        <div class="menu-item" id="menuPlayers">
-            <span>Игроки</span>
-            <span class="arrow">&#x203A;</span>
-        </div>
+
+        <!-- Интерфейс (иконка: шестерёнка) -->
         <div class="menu-item" id="menuInterface">
-            <span>Интерфейс</span>
+            <span class="menu-left">
+                <span class="menu-icon">&#x2699;&#xFE0E;</span>
+                <span>Интерфейс</span>
+            </span>
             <span class="arrow">&#x203A;</span>
         </div>
+
+        <!-- Тема (иконка: половина круга) -->
         <div class="menu-item" id="menuTheme">
-            <span>Тема</span>
+            <span class="menu-left">
+                <span class="menu-icon">&#x25D0;&#xFE0E;</span>
+                <span>Тема</span>
+            </span>
             <span class="arrow">&#x203A;</span>
         </div>
 
@@ -758,65 +841,43 @@
     </div>
 </div>
 
-<!-- ШТОРКА: МАТЧИ -->
-<div class="sheet-overlay" id="sheetMatches">
+<!-- ШТОРКА: СОСТАВ -->
+<div class="sheet-overlay" id="sheetRoster">
     <div class="sheet">
-        <h2>Матчи</h2>
+        <h2>Состав</h2>
 
-        <div class="match-action-row">
-            <button type="button" id="btnSaveMatch">&#x1F4BE;&#xFE0E; Сохранить текущий матч</button>
+        <div class="team-group">
+            <div class="team-group-title">Команда 1</div>
+            <div class="field">
+                <label>Название команды</label>
+                <input id="teamName0" value="Команда 1" maxlength="16">
+            </div>
+            <div class="field">
+                <label id="labelP1">Игрок 1</label>
+                <input id="p1" value="Игрок 1" maxlength="16">
+            </div>
+            <div class="field">
+                <label id="labelP2">Игрок 2</label>
+                <input id="p2" value="Игрок 2" maxlength="16">
+            </div>
         </div>
 
-        <div id="matchesList"></div>
-
-        <div class="match-action-row" id="clearAllRow" style="margin-top:16px;">
-            <button type="button" class="danger" id="btnClearMatches">Очистить все</button>
+        <div class="team-group">
+            <div class="team-group-title">Команда 2</div>
+            <div class="field">
+                <label>Название команды</label>
+                <input id="teamName1" value="Команда 2" maxlength="16">
+            </div>
+            <div class="field">
+                <label id="labelP3">Игрок 3</label>
+                <input id="p3" value="Игрок 3" maxlength="16">
+            </div>
+            <div class="field">
+                <label id="labelP4">Игрок 4</label>
+                <input id="p4" value="Игрок 4" maxlength="16">
+            </div>
         </div>
 
-        <div class="modal-buttons">
-            <button type="button" class="btn-close-sheet">Готово</button>
-        </div>
-    </div>
-</div>
-
-<!-- ШТОРКА: КОМАНДЫ -->
-<div class="sheet-overlay" id="sheetTeams">
-    <div class="sheet">
-        <h2>Команды</h2>
-        <div class="field">
-            <label>Название команды 1</label>
-            <input id="teamName0" value="Команда 1" maxlength="16">
-        </div>
-        <div class="field">
-            <label>Название команды 2</label>
-            <input id="teamName1" value="Команда 2" maxlength="16">
-        </div>
-        <div class="modal-buttons">
-            <button type="button" class="btn-close-sheet">Готово</button>
-        </div>
-    </div>
-</div>
-
-<!-- ШТОРКА: ИГРОКИ -->
-<div class="sheet-overlay" id="sheetPlayers">
-    <div class="sheet">
-        <h2>Игроки</h2>
-        <div class="field">
-            <label id="labelP1">Команда 1 — Игрок 1</label>
-            <input id="p1" value="Игрок 1" maxlength="16">
-        </div>
-        <div class="field">
-            <label id="labelP2">Команда 1 — Игрок 2</label>
-            <input id="p2" value="Игрок 2" maxlength="16">
-        </div>
-        <div class="field">
-            <label id="labelP3">Команда 2 — Игрок 3</label>
-            <input id="p3" value="Игрок 3" maxlength="16">
-        </div>
-        <div class="field">
-            <label id="labelP4">Команда 2 — Игрок 4</label>
-            <input id="p4" value="Игрок 4" maxlength="16">
-        </div>
         <div class="modal-buttons">
             <button type="button" class="btn-close-sheet">Готово</button>
         </div>
@@ -859,11 +920,28 @@
     </div>
 </div>
 
+<!-- ШТОРКА: СПИСОК МАТЧЕЙ -->
+<div class="sheet-overlay" id="sheetMatches">
+    <div class="sheet">
+        <h2>Сохранённые матчи</h2>
+
+        <div id="matchesList"></div>
+
+        <div class="match-action-row" id="clearAllRow" style="display:none;">
+            <button type="button" class="danger" id="btnClearMatches">Очистить все</button>
+        </div>
+
+        <div class="modal-buttons">
+            <button type="button" class="btn-close-sheet">Готово</button>
+        </div>
+    </div>
+</div>
+
 <script>
 (function () {
     "use strict";
 
-    var STORAGE_KEY = "padel_score_v12";
+    var STORAGE_KEY = "padel_score_v14";
     var MATCHES_KEY = "padel_matches_v1";
 
     var players = ["Игрок 1", "Игрок 2", "Игрок 3", "Игрок 4"];
@@ -875,8 +953,6 @@
     var showSwitchButton = false;
     var showTimer = false;
     var currentTheme = "dark";
-
-    /* Время начала текущего матча (null = ещё не начат) */
     var matchStartTime = null;
 
     var timerSeconds = 0;
@@ -907,7 +983,6 @@
     }
 
     function addPoint(team) {
-        /* Если матч ещё не начат — фиксируем время старта */
         if (matchStartTime === null) {
             matchStartTime = Date.now();
         }
@@ -959,20 +1034,14 @@
         showMessage("Новая игра");
     }
 
-    /* ============================================================
-       ФОРМАТИРОВАНИЕ ДАТЫ И ВРЕМЕНИ
-       ============================================================ */
-
+    /* Дата/время */
     function pad2(n) { return n < 10 ? "0" + n : "" + n; }
 
     function formatDateTime(ts) {
         var d = new Date(ts);
-        var day = pad2(d.getDate());
-        var month = pad2(d.getMonth() + 1);
-        var year = ("" + d.getFullYear()).slice(-2);
-        var hours = pad2(d.getHours());
-        var minutes = pad2(d.getMinutes());
-        return day + "." + month + "." + year + " " + hours + ":" + minutes;
+        return pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + "." +
+               ("" + d.getFullYear()).slice(-2) + " " +
+               pad2(d.getHours()) + ":" + pad2(d.getMinutes());
     }
 
     function formatTimeOnly(ts) {
@@ -980,31 +1049,23 @@
         return pad2(d.getHours()) + ":" + pad2(d.getMinutes());
     }
 
-    /* ============================================================
-       МАТЧИ
-       ============================================================ */
-
+    /* Матчи */
     function loadMatches() {
         try {
             var raw = localStorage.getItem(MATCHES_KEY);
             if (!raw) return [];
             var arr = JSON.parse(raw);
             return Array.isArray(arr) ? arr : [];
-        } catch (e) {
-            return [];
-        }
+        } catch (e) { return []; }
     }
 
     function saveMatches(matches) {
         try {
             localStorage.setItem(MATCHES_KEY, JSON.stringify(matches));
-        } catch (e) {
-            console.warn("save matches error", e);
-        }
+        } catch (e) { console.warn("save matches error", e); }
     }
 
     function saveCurrentMatch() {
-        /* Нечего сохранять, если не набрано ни одного очка */
         if (points[0] === 0 && points[1] === 0) {
             showMessage("Счёт 0:0 — нечего сохранять");
             return;
@@ -1064,7 +1125,6 @@
         for (var i = 0; i < matches.length; i++) {
             var m = matches[i];
             var dateStr = formatDateTime(m.startTime) + " → " + formatTimeOnly(m.endTime);
-
             var players1 = m.players[0] + ", " + m.players[1];
             var players2 = m.players[2] + ", " + m.players[3];
 
@@ -1082,7 +1142,6 @@
 
         list.innerHTML = html;
 
-        /* Привязываем кнопки удаления */
         var deleteButtons = list.querySelectorAll(".match-delete");
         for (var j = 0; j < deleteButtons.length; j++) {
             (function (btn) {
@@ -1112,10 +1171,6 @@
             badge.classList.remove("hidden");
         }
     }
-
-    /* ============================================================
-       ОБНОВЛЕНИЕ ЭКРАНА
-       ============================================================ */
 
     function updatePlayerLabels() {
         var t1 = teamNames[0] || "Команда 1";
@@ -1174,8 +1229,7 @@
         }, 2000);
     }
 
-    /* --- Таймер --- */
-
+    /* Таймер */
     function formatTime(sec) {
         var m = Math.floor(sec / 60);
         var s = sec % 60;
@@ -1220,8 +1274,7 @@
         renderTimer();
     }
 
-    /* --- Настройки --- */
-
+    /* Настройки */
     function openSettings() {
         $("teamName0").value = teamNames[0];
         $("teamName1").value = teamNames[1];
@@ -1254,7 +1307,7 @@
     }
 
     function openSheet(id) {
-        if (id === "sheetPlayers") {
+        if (id === "sheetRoster") {
             var t1 = $("teamName0").value.trim() || "Команда 1";
             var t2 = $("teamName1").value.trim() || "Команда 2";
             $("labelP1").textContent = t1 + " — Игрок 1";
@@ -1277,13 +1330,12 @@
             update();
             saveState();
         }
-        if (id === "sheetTeams" || id === "sheetPlayers") {
+        if (id === "sheetRoster") {
             saveAllSettings();
         }
     }
 
-    /* --- Тема --- */
-
+    /* Тема */
     function applyTheme() {
         if (currentTheme === "light") {
             document.body.classList.add("light-theme");
@@ -1306,8 +1358,7 @@
         saveState();
     }
 
-    /* --- Сохранение --- */
-
+    /* Сохранение */
     function saveState() {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({
@@ -1353,16 +1404,19 @@
         $("btnTimerToggle").addEventListener("click", toggleTimer);
         $("btnTimerReset").addEventListener("click", resetTimer);
 
+        /* Сохранение матча — прямо из меню */
+        $("btnSaveMatchMenu").addEventListener("click", function () {
+            saveCurrentMatch();
+        });
+
+        /* Открытие шторок */
+        $("menuRoster").addEventListener("click", function () { openSheet("sheetRoster"); });
         $("menuMatches").addEventListener("click", function () { openSheet("sheetMatches"); });
-        $("menuTeams").addEventListener("click", function () { openSheet("sheetTeams"); });
-        $("menuPlayers").addEventListener("click", function () { openSheet("sheetPlayers"); });
         $("menuInterface").addEventListener("click", function () { openSheet("sheetInterface"); });
         $("menuTheme").addEventListener("click", function () { openSheet("sheetTheme"); });
 
         $("btnCloseSettings").addEventListener("click", closeSettings);
 
-        /* Кнопки в шторке матчей */
-        $("btnSaveMatch").addEventListener("click", saveCurrentMatch);
         $("btnClearMatches").addEventListener("click", clearAllMatches);
 
         var closeButtons = document.querySelectorAll(".btn-close-sheet");
@@ -1416,6 +1470,8 @@
         localStorage.removeItem("padel_score_v9");
         localStorage.removeItem("padel_score_v10");
         localStorage.removeItem("padel_score_v11");
+        localStorage.removeItem("padel_score_v12");
+        localStorage.removeItem("padel_score_v13");
     } catch (e) {}
 
     bind();
